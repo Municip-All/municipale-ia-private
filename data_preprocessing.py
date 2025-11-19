@@ -4,14 +4,6 @@
 #   PROJET EDP
 #####
 
-"""
-Data preprocessing for Municip'All IA
-- Loads CSV (or generates synthetic if none)
-- Cleans text
-- Creates features (TF-IDF text, geo bucket, hour)
-- Saves artifacts: preprocessed.csv, tfidf.joblib
-"""
-
 from pathlib import Path
 import re
 import pandas as pd
@@ -72,21 +64,16 @@ def main():
     else:
         df = generate_synthetic()
 
-    # Basic cleaning
     df["description"] = df["description"].astype(str).apply(normalize_text)
     df["hour"] = df["hour"].fillna(0).astype(int)
     df["geo_bucket"] = [geo_bucket(la, lo) for la, lo in zip(df["lat"], df["lon"])]
     df = df.dropna(subset=["description", "type"])
 
-    # TF-IDF
     tfidf = TfidfVectorizer(max_features=5000, ngram_range=(1,2))
     X_text = tfidf.fit_transform(df["description"].values)
 
-    # Persist artifacts
     joblib.dump(tfidf, OUT_DIR / "tfidf.joblib")
 
-    # Save preprocessed tabular for later merge in training
-    # Note: we store text separately to avoid huge CSVs; training script will re-load tfidf for matrix.
     keep_cols = ["description", "lat", "lon", "hour", "geo_bucket", "type"]
     df[keep_cols].to_csv(OUT_DIR / "preprocessed.csv", index=False)
 
