@@ -75,3 +75,4 @@ def health():
 def stats():
     # stub for demo
     return {"info": "aggregate stats would be computed here"}
+
