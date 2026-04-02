@@ -12,5 +12,7 @@ services:
     environment:
       QDRANT__STORAGE__STORAGE_PATH: /qdrant/storage
       QDRANT__SERVICE__GRPC_PORT: 6334
-      QDRANT__SERVICE__API_KEY: "changeme"
+      QDRANT__SERVICE__API_KEY: ${QDRANT_API_KEY}
     restart: unless-stopped
+
+  
