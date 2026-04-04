@@ -1,0 +1,15 @@
+{
+    "report" : {
+        "id" : 0,
+        "user_id" : 1,
+        "content" : "Un tronc d'arbe abatut sur le côté gauche de la chaussés",
+        "coordonates" : {
+            "lat" : 49.031527780371334,
+            "lon" : 2.342248423255122
+        },
+        "service" : "N/A",
+        "states" : "pending",
+        "emergency": "high",
+        "created_at" : "timestamp"
+    }
+}

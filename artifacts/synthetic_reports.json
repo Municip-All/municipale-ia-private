@@ -1,0 +1,2102 @@
+[
+  {
+    "text": "Ampoule grillée sur le lampadaire près de l'arrêt de bus rue Henri Barbusse",
+    "categorie": "eclairage",
+    "quartier": "Joliot-Curie",
+    "date": "2025-07-25",
+    "urgence": "haute"
+  },
+  {
+    "text": "Pelouse du parc parc des Impressionnistes complètement défoncée par le passage",
+    "categorie": "espaces_verts",
+    "quartier": "Saint-Denis",
+    "date": "2025-07-25",
+    "urgence": "basse"
+  },
+  {
+    "text": "Passage piéton effacé juste après le carrefour rue Raspail, impossible de passer en fauteuil roulant",
+    "categorie": "voirie",
+    "quartier": "Mazagran",
+    "date": "2025-07-26",
+    "urgence": "haute"
+  },
+  {
+    "text": "Arbre mort au niveau du 67 rue des Peupliers, ça bloque le passage",
+    "categorie": "espaces_verts",
+    "quartier": "Centre-ville",
+    "date": "2025-07-26",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Fissure énorme sur la route à l'angle de la rue Antonin Artaud et du boulevard, mon voisin s'est déjà fait mal",
+    "categorie": "voirie",
+    "quartier": "Joliot-Curie",
+    "date": "2025-07-26",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Lampadaire éteint devant l'école rue de Sartrouville depuis une bonne dizaine de jours, ça craint pour les personnes âgées",
+    "categorie": "eclairage",
+    "quartier": "Val-Notre-Dame",
+    "date": "2025-07-26",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Déjections canines partout à l'angle de la boulevard du Général Delambre et du boulevard, c'est vraiment dégueulasse",
+    "categorie": "proprete",
+    "quartier": "Mazagran",
+    "date": "2025-07-26",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Sac poubelle éventré à l'angle de la rue Henri Barbusse et du boulevard, c'est pas digne du quartier",
+    "categorie": "proprete",
+    "quartier": "Centre-ville",
+    "date": "2025-07-27",
+    "urgence": "basse"
+  },
+  {
+    "text": "Travaux très bruyants en face de la pharmacie rue Victor Hugo à des heures pas possibles",
+    "categorie": "bruit",
+    "quartier": "Les Coteaux",
+    "date": "2025-07-27",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Travaux très bruyants juste après le carrefour avenue de Stalingrad à des heures pas possibles",
+    "categorie": "bruit",
+    "quartier": "Joliot-Curie",
+    "date": "2025-07-27",
+    "urgence": "haute"
+  },
+  {
+    "text": "Tags et graffitis au niveau du 82 impasse des Lilas, c'est devenu invivable visuellement",
+    "categorie": "proprete",
+    "quartier": "La Colonie",
+    "date": "2025-07-28",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Épave de voiture abandonnée à l'angle de la rue des Peupliers et du boulevard depuis plus d'une semaine",
+    "categorie": "stationnement",
+    "quartier": "Centre-ville",
+    "date": "2025-07-28",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Branche assez gros qui dépasse sur le trottoir devant l'école rue de Sartrouville",
+    "categorie": "espaces_verts",
+    "quartier": "Le Marais",
+    "date": "2025-07-29",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Travaux très bruyants rue des Peupliers, côté Les Champioux même le dimanche matin",
+    "categorie": "bruit",
+    "quartier": "Orgemont",
+    "date": "2025-07-29",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Éclairage public qui clignote près de l'arrêt de bus avenue de la République, c'est très gênant",
+    "categorie": "eclairage",
+    "quartier": "La Colonie",
+    "date": "2025-07-29",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Mégots partout à l'angle de la boulevard Héloïse et du boulevard, ça donne une image déplorable",
+    "categorie": "proprete",
+    "quartier": "Joliot-Curie",
+    "date": "2025-07-29",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Tapage nocturne récurrent devant l'école rue Victor Hugo, ça dure depuis des semaines",
+    "categorie": "bruit",
+    "quartier": "Les Champioux",
+    "date": "2025-07-30",
+    "urgence": "haute"
+  },
+  {
+    "text": "Eau stagnante près de l'arrêt de bus avenue Jean Jaurès depuis au moins 3 semaines",
+    "categorie": "eau_assainissement",
+    "quartier": "Les Coteaux",
+    "date": "2025-07-30",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Barrière en très mauvais état en face de la pharmacie rue de Calais, il manque des parties",
+    "categorie": "mobilier_urbain",
+    "quartier": "Joliot-Curie",
+    "date": "2025-07-30",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Véhicule qui bloque l'accès pompiers dans le quartier Orgemont",
+    "categorie": "stationnement",
+    "quartier": "Val-d'Argent",
+    "date": "2025-07-31",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Chantier qui commence tous les soirs après 22h à l'angle de la rue de la Gare et du boulevard",
+    "categorie": "bruit",
+    "quartier": "Le Marais",
+    "date": "2025-07-31",
+    "urgence": "basse"
+  },
+  {
+    "text": "Barrière complètement défoncé près de l'arrêt de bus boulevard du Général Delambre, il manque des parties",
+    "categorie": "mobilier_urbain",
+    "quartier": "Les Champioux",
+    "date": "2025-08-01",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Le lampadaire devant le 63 rue Henri Barbusse est cassé, ma fille a peur de rentrer seule",
+    "categorie": "eclairage",
+    "quartier": "La Colonie",
+    "date": "2025-08-01",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Déjections canines partout juste après le carrefour avenue de la République, c'est pas digne du quartier",
+    "categorie": "proprete",
+    "quartier": "Centre-ville",
+    "date": "2025-08-01",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Poubelle renversée par le vent à côté du jardin des Coteaux",
+    "categorie": "proprete",
+    "quartier": "Val-d'Argent",
+    "date": "2025-08-01",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Épave de voiture abandonnée juste après le carrefour impasse des Lilas depuis au moins 3 semaines",
+    "categorie": "stationnement",
+    "quartier": "Les Champioux",
+    "date": "2025-08-02",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Trottoir complètement défoncé devant le 1 avenue Jean Jaurès, c'est dangereux pour les vélos",
+    "categorie": "voirie",
+    "quartier": "Les Coteaux",
+    "date": "2025-08-02",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Le lampadaire devant le 70 rue Raspail est cassé, il y a eu des incidents",
+    "categorie": "eclairage",
+    "quartier": "Orgemont",
+    "date": "2025-08-03",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Odeur d'égout très forte au niveau du 87 boulevard Héloïse",
+    "categorie": "eau_assainissement",
+    "quartier": "Val-d'Argent",
+    "date": "2025-08-03",
+    "urgence": "haute"
+  },
+  {
+    "text": "Haie non taillée à l'angle de la rue Pierre Semard et du boulevard, les branches touchent les câbles",
+    "categorie": "espaces_verts",
+    "quartier": "Val-d'Argent",
+    "date": "2025-08-03",
+    "urgence": "haute"
+  },
+  {
+    "text": "Arbre mort près de l'arrêt de bus rue de Sartrouville, les branches touchent les câbles",
+    "categorie": "espaces_verts",
+    "quartier": "Les Coteaux",
+    "date": "2025-08-03",
+    "urgence": "haute"
+  },
+  {
+    "text": "La rue est vraiment sale en face de la pharmacie avenue de la République, les enfants jouent à côté",
+    "categorie": "proprete",
+    "quartier": "Les Coteaux",
+    "date": "2025-08-04",
+    "urgence": "haute"
+  },
+  {
+    "text": "Mégots partout à côté du parc des Impressionnistes, ça donne une image déplorable",
+    "categorie": "proprete",
+    "quartier": "Val-d'Argent",
+    "date": "2025-08-05",
+    "urgence": "basse"
+  },
+  {
+    "text": "Camion garé en double file dans le quartier Val-Notre-Dame, les piétons doivent marcher sur la route",
+    "categorie": "stationnement",
+    "quartier": "Val-Sud",
+    "date": "2025-08-05",
+    "urgence": "haute"
+  },
+  {
+    "text": "Arbre avec des branches mortes dans le quartier Les Coteaux, impossible de passer avec une poussette",
+    "categorie": "espaces_verts",
+    "quartier": "Joliot-Curie",
+    "date": "2025-08-05",
+    "urgence": "basse"
+  },
+  {
+    "text": "Stationnement gênant rue Raspail, côté Centre-ville, impossible de sortir de mon garage",
+    "categorie": "stationnement",
+    "quartier": "Saint-Denis",
+    "date": "2025-08-05",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Plusieurs lampadaires en panne en face de la pharmacie rue de la Gare",
+    "categorie": "eclairage",
+    "quartier": "Val-Notre-Dame",
+    "date": "2025-08-06",
+    "urgence": "haute"
+  },
+  {
+    "text": "La rue est vraiment sale dans le quartier Centre-ville, ça pue surtout en été",
+    "categorie": "proprete",
+    "quartier": "Les Coteaux",
+    "date": "2025-08-06",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "La rue est vraiment sale boulevard du Général Delambre, côté Centre-ville, ça pue surtout en été",
+    "categorie": "proprete",
+    "quartier": "Orgemont",
+    "date": "2025-08-06",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Le revêtement de la chaussée est cassé juste après le carrefour allée des Tilleuls",
+    "categorie": "voirie",
+    "quartier": "Joliot-Curie",
+    "date": "2025-08-07",
+    "urgence": "haute"
+  },
+  {
+    "text": "Véhicule garé sur le trottoir à côté du parc des Impressionnistes, impossible de sortir de mon garage",
+    "categorie": "stationnement",
+    "quartier": "Saint-Denis",
+    "date": "2025-08-07",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Bordure de trottoir en très mauvais état au niveau du 50 boulevard Héloïse",
+    "categorie": "voirie",
+    "quartier": "Saint-Denis",
+    "date": "2025-08-07",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Plaque d'égout mal fixée à côté du square Jean Macé, risque de chute pour les piétons",
+    "categorie": "voirie",
+    "quartier": "Val-d'Argent",
+    "date": "2025-08-07",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Stationnement gênant à côté du square Héloïse, les pompiers ne pourraient pas passer",
+    "categorie": "stationnement",
+    "quartier": "Val-Notre-Dame",
+    "date": "2025-08-08",
+    "urgence": "basse"
+  },
+  {
+    "text": "Le revêtement de la chaussée est cassé juste après le carrefour rue de la Gare",
+    "categorie": "voirie",
+    "quartier": "Les Coteaux",
+    "date": "2025-08-08",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Chantier qui commence à des heures pas possibles devant l'école avenue de la République",
+    "categorie": "bruit",
+    "quartier": "Mazagran",
+    "date": "2025-08-08",
+    "urgence": "basse"
+  },
+  {
+    "text": "Alarme qui sonne en continu au niveau du 62 rue de la Gare depuis une bonne dizaine de jours",
+    "categorie": "bruit",
+    "quartier": "Val-Notre-Dame",
+    "date": "2025-08-09",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Abribus avec la vitre cassée à l'arrêt Gabriel Péri",
+    "categorie": "mobilier_urbain",
+    "quartier": "Val-Sud",
+    "date": "2025-08-09",
+    "urgence": "basse"
+  },
+  {
+    "text": "Mauvaises herbes envahissent le trottoir dans le quartier Val-Notre-Dame",
+    "categorie": "espaces_verts",
+    "quartier": "Les Champioux",
+    "date": "2025-08-09",
+    "urgence": "basse"
+  },
+  {
+    "text": "Poteau de signalisation tagué et illisible à côté du parc du Moulin",
+    "categorie": "mobilier_urbain",
+    "quartier": "Le Marais",
+    "date": "2025-08-10",
+    "urgence": "basse"
+  },
+  {
+    "text": "Route inondée juste après le carrefour allée des Tilleuls à chaque pluie, les poussettes ne passent plus",
+    "categorie": "voirie",
+    "quartier": "Val-Sud",
+    "date": "2025-08-10",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Panneau d'affichage cassé dans le quartier Le Marais",
+    "categorie": "mobilier_urbain",
+    "quartier": "Val-Sud",
+    "date": "2025-08-10",
+    "urgence": "basse"
+  },
+  {
+    "text": "Plaque d'égout manquante à côté du jardin des Coteaux, impossible de passer en fauteuil roulant",
+    "categorie": "voirie",
+    "quartier": "Val-Sud",
+    "date": "2025-08-10",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Tags et graffitis à côté du square Jean Macé, c'est sur plusieurs mètres",
+    "categorie": "proprete",
+    "quartier": "Val-Sud",
+    "date": "2025-08-10",
+    "urgence": "basse"
+  },
+  {
+    "text": "Travaux très bruyants près de l'arrêt de bus avenue de la République dès 6h du matin",
+    "categorie": "bruit",
+    "quartier": "Joliot-Curie",
+    "date": "2025-08-10",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Panneau d'affichage illisible avenue de Stalingrad, côté Saint-Denis",
+    "categorie": "mobilier_urbain",
+    "quartier": "Saint-Denis",
+    "date": "2025-08-11",
+    "urgence": "basse"
+  },
+  {
+    "text": "Route inondée à l'angle de la rue de la Gare et du boulevard à chaque pluie, impossible de passer en fauteuil roulant",
+    "categorie": "voirie",
+    "quartier": "Val-Sud",
+    "date": "2025-08-11",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Ampoule grillée sur le lampadaire rue Antonin Artaud, côté Joliot-Curie",
+    "categorie": "eclairage",
+    "quartier": "Les Coteaux",
+    "date": "2025-08-11",
+    "urgence": "basse"
+  },
+  {
+    "text": "Branche de taille moyenne qui dépasse sur le trottoir au niveau du 86 rue de la Gare",
+    "categorie": "espaces_verts",
+    "quartier": "Mazagran",
+    "date": "2025-08-12",
+    "urgence": "haute"
+  },
+  {
+    "text": "Chantier qui commence à des heures pas possibles près de l'arrêt de bus rue Paul Vaillant-Couturier",
+    "categorie": "bruit",
+    "quartier": "La Colonie",
+    "date": "2025-08-12",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Bordure de trottoir abîmé depuis longtemps à l'angle de la avenue Gabriel Péri et du boulevard",
+    "categorie": "voirie",
+    "quartier": "Joliot-Curie",
+    "date": "2025-08-12",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Mégots partout devant l'école rue du 8 Mai 1945, il n'y a aucun cendrier à proximité",
+    "categorie": "proprete",
+    "quartier": "La Colonie",
+    "date": "2025-08-12",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Mauvaises herbes envahissent le trottoir dans le quartier Orgemont",
+    "categorie": "espaces_verts",
+    "quartier": "Orgemont",
+    "date": "2025-08-12",
+    "urgence": "basse"
+  },
+  {
+    "text": "Éclairage trop faible au niveau du 5 rue du 8 Mai 1945, on n'y voit rien la nuit",
+    "categorie": "eclairage",
+    "quartier": "Les Champioux",
+    "date": "2025-08-12",
+    "urgence": "haute"
+  },
+  {
+    "text": "Épave de voiture abandonnée devant l'école avenue de Stalingrad depuis 2 semaines",
+    "categorie": "stationnement",
+    "quartier": "Joliot-Curie",
+    "date": "2025-08-12",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Plusieurs lampadaires en panne en face de la pharmacie avenue de la République",
+    "categorie": "eclairage",
+    "quartier": "Orgemont",
+    "date": "2025-08-12",
+    "urgence": "haute"
+  },
+  {
+    "text": "Mégots partout au niveau du 54 rue Paul Vaillant-Couturier, ça donne une image déplorable",
+    "categorie": "proprete",
+    "quartier": "Le Marais",
+    "date": "2025-08-13",
+    "urgence": "haute"
+  },
+  {
+    "text": "Arbre malade qui perd son écorce dans le quartier Saint-Denis, ça bloque le passage",
+    "categorie": "espaces_verts",
+    "quartier": "Joliot-Curie",
+    "date": "2025-08-14",
+    "urgence": "haute"
+  },
+  {
+    "text": "Nuisances sonores dans le quartier Saint-Denis à cause de motos qui font des rodéos",
+    "categorie": "bruit",
+    "quartier": "Centre-ville",
+    "date": "2025-08-14",
+    "urgence": "basse"
+  },
+  {
+    "text": "Mégots partout près de l'arrêt de bus rue des Jardins, c'est devant une école en plus",
+    "categorie": "proprete",
+    "quartier": "Val-Sud",
+    "date": "2025-08-14",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Plaque d'égout qui bouge et fait du bruit devant l'école rue de la Gare, risque de chute pour les piétons",
+    "categorie": "voirie",
+    "quartier": "La Colonie",
+    "date": "2025-08-15",
+    "urgence": "haute"
+  },
+  {
+    "text": "Poubelle pleine à craquer à l'angle de la rue Émile Zola et du boulevard",
+    "categorie": "proprete",
+    "quartier": "Val-Notre-Dame",
+    "date": "2025-08-15",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Plaque d'égout descellée dans le quartier Centre-ville, les voitures font des écarts",
+    "categorie": "voirie",
+    "quartier": "Val-d'Argent",
+    "date": "2025-08-15",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Plusieurs lampadaires en panne juste après le carrefour rue Paul Vaillant-Couturier",
+    "categorie": "eclairage",
+    "quartier": "La Colonie",
+    "date": "2025-08-15",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Ampoule grillée sur le lampadaire dans le quartier Val-Notre-Dame",
+    "categorie": "eclairage",
+    "quartier": "Saint-Denis",
+    "date": "2025-08-16",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Épave de voiture abandonnée dans le quartier Le Marais depuis plus d'une semaine",
+    "categorie": "stationnement",
+    "quartier": "Val-Notre-Dame",
+    "date": "2025-08-16",
+    "urgence": "basse"
+  },
+  {
+    "text": "Le revêtement de la chaussée est complètement défoncé devant l'école rue Raspail",
+    "categorie": "voirie",
+    "quartier": "Centre-ville",
+    "date": "2025-08-16",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Canalisation qui fuit près de l'arrêt de bus avenue du Général Leclerc, la chaussée est inondée",
+    "categorie": "eau_assainissement",
+    "quartier": "Saint-Denis",
+    "date": "2025-08-17",
+    "urgence": "haute"
+  },
+  {
+    "text": "Plusieurs lampadaires en panne dans le quartier Saint-Denis",
+    "categorie": "eclairage",
+    "quartier": "La Colonie",
+    "date": "2025-08-18",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Plaque d'égout descellée au niveau du 102 rue du 8 Mai 1945, impossible de passer en fauteuil roulant",
+    "categorie": "voirie",
+    "quartier": "La Colonie",
+    "date": "2025-08-18",
+    "urgence": "haute"
+  },
+  {
+    "text": "Éclairage trop faible rue Marcel Cachin, côté Val-Sud, il y a eu des incidents",
+    "categorie": "eclairage",
+    "quartier": "Les Champioux",
+    "date": "2025-08-18",
+    "urgence": "basse"
+  },
+  {
+    "text": "Abribus dont le toit fuit à l'arrêt Joliot-Curie",
+    "categorie": "mobilier_urbain",
+    "quartier": "La Colonie",
+    "date": "2025-08-18",
+    "urgence": "basse"
+  },
+  {
+    "text": "Branche de taille moyenne qui dépasse sur le trottoir près de l'arrêt de bus avenue de Stalingrad",
+    "categorie": "espaces_verts",
+    "quartier": "Saint-Denis",
+    "date": "2025-08-18",
+    "urgence": "haute"
+  },
+  {
+    "text": "Arbre malade qui perd son écorce impasse des Lilas, côté La Colonie, impossible de passer avec une poussette",
+    "categorie": "espaces_verts",
+    "quartier": "Joliot-Curie",
+    "date": "2025-08-18",
+    "urgence": "basse"
+  },
+  {
+    "text": "Dépôt sauvage de déchets de chantier juste après le carrefour rue Raspail",
+    "categorie": "proprete",
+    "quartier": "Orgemont",
+    "date": "2025-08-19",
+    "urgence": "haute"
+  },
+  {
+    "text": "Nid de poule profond juste après le carrefour rue de Sartrouville, risque de chute pour les piétons",
+    "categorie": "voirie",
+    "quartier": "Centre-ville",
+    "date": "2025-08-19",
+    "urgence": "haute"
+  },
+  {
+    "text": "La rue est vraiment sale juste après le carrefour boulevard Héloïse, c'est vraiment dégueulasse",
+    "categorie": "proprete",
+    "quartier": "Saint-Denis",
+    "date": "2025-08-19",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Banc cassé impasse des Lilas, côté Val-d'Argent, c'est inutilisable",
+    "categorie": "mobilier_urbain",
+    "quartier": "Mazagran",
+    "date": "2025-08-19",
+    "urgence": "basse"
+  },
+  {
+    "text": "Épave de voiture abandonnée en face de la pharmacie rue du 8 Mai 1945 depuis une bonne dizaine de jours",
+    "categorie": "stationnement",
+    "quartier": "Les Champioux",
+    "date": "2025-08-19",
+    "urgence": "basse"
+  },
+  {
+    "text": "Tapage nocturne récurrent à côté du square Héloïse, impossible de dormir",
+    "categorie": "bruit",
+    "quartier": "Val-Notre-Dame",
+    "date": "2025-08-19",
+    "urgence": "basse"
+  },
+  {
+    "text": "Banc cassé juste après le carrefour avenue Gabriel Péri, quelqu'un va se blesser",
+    "categorie": "mobilier_urbain",
+    "quartier": "Le Marais",
+    "date": "2025-08-19",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Voiture ventouse juste après le carrefour rue Marcel Cachin depuis depuis le mois dernier",
+    "categorie": "stationnement",
+    "quartier": "Le Marais",
+    "date": "2025-08-20",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Encombrants abandonnés à l'angle de la rue des Jardins et du boulevard depuis quelques jours",
+    "categorie": "proprete",
+    "quartier": "Les Coteaux",
+    "date": "2025-08-20",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Nid de poule de taille moyenne au niveau du 101 avenue Gabriel Péri, impossible de passer en fauteuil roulant",
+    "categorie": "voirie",
+    "quartier": "Mazagran",
+    "date": "2025-08-20",
+    "urgence": "basse"
+  },
+  {
+    "text": "Ampoule grillée sur le lampadaire dans le quartier Les Champioux",
+    "categorie": "eclairage",
+    "quartier": "Le Marais",
+    "date": "2025-08-20",
+    "urgence": "haute"
+  },
+  {
+    "text": "Véhicule qui bloque l'accès pompiers devant l'école rue de la Gare",
+    "categorie": "stationnement",
+    "quartier": "Val-Notre-Dame",
+    "date": "2025-08-20",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Chantier qui commence à des heures pas possibles rue Raspail, côté Orgemont",
+    "categorie": "bruit",
+    "quartier": "Orgemont",
+    "date": "2025-08-20",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Tapage nocturne récurrent à l'angle de la rue de Sartrouville et du boulevard, les voisins en ont tous marre",
+    "categorie": "bruit",
+    "quartier": "Val-Notre-Dame",
+    "date": "2025-08-21",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "La rue est vraiment sale en face de la pharmacie rue Henri Barbusse, c'est pas digne du quartier",
+    "categorie": "proprete",
+    "quartier": "Orgemont",
+    "date": "2025-08-21",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Haie non taillée devant l'école avenue Jean Jaurès, impossible de passer avec une poussette",
+    "categorie": "espaces_verts",
+    "quartier": "La Colonie",
+    "date": "2025-08-21",
+    "urgence": "basse"
+  },
+  {
+    "text": "Dépôt sauvage d'encombrants en face de la pharmacie rue Émile Zola",
+    "categorie": "proprete",
+    "quartier": "Saint-Denis",
+    "date": "2025-08-21",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Abribus sans banc à l'arrêt Gabriel Péri",
+    "categorie": "mobilier_urbain",
+    "quartier": "Val-Sud",
+    "date": "2025-08-21",
+    "urgence": "basse"
+  },
+  {
+    "text": "Le lampadaire devant le 99 rue de la Gare est cassé, ma fille a peur de rentrer seule",
+    "categorie": "eclairage",
+    "quartier": "Val-Sud",
+    "date": "2025-08-21",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Dépôt sauvage de pneus et ferraille en face de la pharmacie rue de Calais",
+    "categorie": "proprete",
+    "quartier": "Val-d'Argent",
+    "date": "2025-08-21",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Odeur d'égout très forte juste après le carrefour rue Émile Zola",
+    "categorie": "eau_assainissement",
+    "quartier": "Les Champioux",
+    "date": "2025-08-22",
+    "urgence": "haute"
+  },
+  {
+    "text": "Route inondée à l'angle de la rue Pierre Semard et du boulevard à chaque pluie, ça gêne la circulation",
+    "categorie": "voirie",
+    "quartier": "Joliot-Curie",
+    "date": "2025-08-22",
+    "urgence": "haute"
+  },
+  {
+    "text": "Épave de voiture abandonnée près de l'arrêt de bus rue de Calais depuis 2 semaines",
+    "categorie": "stationnement",
+    "quartier": "Val-d'Argent",
+    "date": "2025-08-22",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Fuite d'eau impasse des Lilas, côté Les Champioux, il y a une flaque permanente",
+    "categorie": "eau_assainissement",
+    "quartier": "Saint-Denis",
+    "date": "2025-08-22",
+    "urgence": "basse"
+  },
+  {
+    "text": "Ampoule grillée sur le lampadaire à l'angle de la rue Raspail et du boulevard",
+    "categorie": "eclairage",
+    "quartier": "Centre-ville",
+    "date": "2025-08-22",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Nid de poule énorme dans le quartier Val-Notre-Dame, les poussettes ne passent plus",
+    "categorie": "voirie",
+    "quartier": "Les Champioux",
+    "date": "2025-08-23",
+    "urgence": "haute"
+  },
+  {
+    "text": "Fontaine à eau en panne dans le quartier La Colonie depuis au moins 3 semaines",
+    "categorie": "mobilier_urbain",
+    "quartier": "Orgemont",
+    "date": "2025-08-23",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Voiture ventouse à côté du parc des Impressionnistes depuis une bonne dizaine de jours",
+    "categorie": "stationnement",
+    "quartier": "Val-Sud",
+    "date": "2025-08-23",
+    "urgence": "basse"
+  },
+  {
+    "text": "Éclairage trop faible dans le quartier La Colonie, le passage est vraiment sombre",
+    "categorie": "eclairage",
+    "quartier": "Saint-Denis",
+    "date": "2025-08-24",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Borne à vélos hors service juste après le carrefour avenue de Stalingrad",
+    "categorie": "mobilier_urbain",
+    "quartier": "Les Champioux",
+    "date": "2025-08-24",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Panneau d'affichage cassé en face de la pharmacie rue Victor Hugo",
+    "categorie": "mobilier_urbain",
+    "quartier": "La Colonie",
+    "date": "2025-08-24",
+    "urgence": "basse"
+  },
+  {
+    "text": "Véhicule qui bloque l'accès pompiers juste après le carrefour rue Pierre Semard",
+    "categorie": "stationnement",
+    "quartier": "La Colonie",
+    "date": "2025-08-24",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Poteau de signalisation tordu en face de la pharmacie rue de la Gare",
+    "categorie": "mobilier_urbain",
+    "quartier": "Mazagran",
+    "date": "2025-08-25",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Dépôt sauvage de gravats et de vieux meubles au niveau du 89 rue Marcel Cachin",
+    "categorie": "proprete",
+    "quartier": "Val-Sud",
+    "date": "2025-08-25",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Encombrants abandonnés au niveau du 10 rue Antonin Artaud depuis depuis le mois dernier",
+    "categorie": "proprete",
+    "quartier": "Val-Sud",
+    "date": "2025-08-26",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Encombrants abandonnés en face de la pharmacie avenue de la République depuis au moins 3 semaines",
+    "categorie": "proprete",
+    "quartier": "Le Marais",
+    "date": "2025-08-26",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Mégots partout juste après le carrefour allée des Tilleuls, il n'y a aucun cendrier à proximité",
+    "categorie": "proprete",
+    "quartier": "Saint-Denis",
+    "date": "2025-08-27",
+    "urgence": "haute"
+  },
+  {
+    "text": "Encombrants abandonnés devant l'école rue Victor Hugo depuis une bonne dizaine de jours",
+    "categorie": "proprete",
+    "quartier": "Saint-Denis",
+    "date": "2025-08-28",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Dépôt sauvage de pneus et ferraille en face de la pharmacie rue Henri Barbusse",
+    "categorie": "proprete",
+    "quartier": "La Colonie",
+    "date": "2025-08-28",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "La rue est vraiment sale à l'angle de la rue des Jardins et du boulevard, c'est vraiment dégueulasse",
+    "categorie": "proprete",
+    "quartier": "Joliot-Curie",
+    "date": "2025-08-29",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Lampadaire éteint en face de la pharmacie boulevard du Général Delambre depuis au moins 3 semaines, c'est dangereux le soir",
+    "categorie": "eclairage",
+    "quartier": "Val-d'Argent",
+    "date": "2025-08-29",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Stationnement gênant avenue Jean Jaurès, côté Val-d'Argent, impossible de sortir de mon garage",
+    "categorie": "stationnement",
+    "quartier": "Les Coteaux",
+    "date": "2025-08-29",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Odeur d'égout très forte au niveau du 74 avenue du Général Leclerc",
+    "categorie": "eau_assainissement",
+    "quartier": "Joliot-Curie",
+    "date": "2025-08-29",
+    "urgence": "haute"
+  },
+  {
+    "text": "Encombrants abandonnés avenue du Général Leclerc, côté Val-Sud depuis plus d'une semaine",
+    "categorie": "proprete",
+    "quartier": "Les Champioux",
+    "date": "2025-08-29",
+    "urgence": "basse"
+  },
+  {
+    "text": "Panneau d'affichage cassé à côté du jardin des Coteaux",
+    "categorie": "mobilier_urbain",
+    "quartier": "Les Coteaux",
+    "date": "2025-08-30",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Le revêtement de la chaussée est complètement défoncé devant l'école rue de Sartrouville",
+    "categorie": "voirie",
+    "quartier": "Centre-ville",
+    "date": "2025-08-30",
+    "urgence": "basse"
+  },
+  {
+    "text": "Pas d'éclairage dans le passage juste après le carrefour rue Marcel Cachin, ma fille a peur de rentrer seule",
+    "categorie": "eclairage",
+    "quartier": "Centre-ville",
+    "date": "2025-08-30",
+    "urgence": "basse"
+  },
+  {
+    "text": "Alarme qui sonne en continu en face de la pharmacie rue des Jardins depuis presque un mois",
+    "categorie": "bruit",
+    "quartier": "Saint-Denis",
+    "date": "2025-08-31",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Encombrants abandonnés à côté du square Jean Macé depuis 2 semaines",
+    "categorie": "proprete",
+    "quartier": "Mazagran",
+    "date": "2025-09-01",
+    "urgence": "basse"
+  },
+  {
+    "text": "Stationnement gênant au niveau du 118 rue Raspail, les pompiers ne pourraient pas passer",
+    "categorie": "stationnement",
+    "quartier": "Orgemont",
+    "date": "2025-09-01",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Plaque d'égout cassée juste après le carrefour rue Victor Hugo, les voitures font des écarts",
+    "categorie": "voirie",
+    "quartier": "Joliot-Curie",
+    "date": "2025-09-01",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Poubelle jamais vidée devant l'école rue Émile Zola",
+    "categorie": "proprete",
+    "quartier": "Centre-ville",
+    "date": "2025-09-01",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Arbre dangereux qui penche près de l'arrêt de bus rue des Peupliers, ça bloque le passage",
+    "categorie": "espaces_verts",
+    "quartier": "Saint-Denis",
+    "date": "2025-09-01",
+    "urgence": "basse"
+  },
+  {
+    "text": "Le revêtement de la chaussée est fissuré juste après le carrefour rue Antonin Artaud",
+    "categorie": "voirie",
+    "quartier": "Centre-ville",
+    "date": "2025-09-01",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Le revêtement de la chaussée est complètement défoncé dans le quartier Val-Notre-Dame",
+    "categorie": "voirie",
+    "quartier": "Val-d'Argent",
+    "date": "2025-09-02",
+    "urgence": "basse"
+  },
+  {
+    "text": "Panneau d'affichage illisible près de l'arrêt de bus avenue Jean Jaurès",
+    "categorie": "mobilier_urbain",
+    "quartier": "Val-Sud",
+    "date": "2025-09-02",
+    "urgence": "basse"
+  },
+  {
+    "text": "Poteau de signalisation arraché devant l'école rue du 8 Mai 1945",
+    "categorie": "mobilier_urbain",
+    "quartier": "Val-Notre-Dame",
+    "date": "2025-09-02",
+    "urgence": "basse"
+  },
+  {
+    "text": "Nid de poule de taille moyenne à l'angle de la avenue de la République et du boulevard, mon voisin s'est déjà fait mal",
+    "categorie": "voirie",
+    "quartier": "Le Marais",
+    "date": "2025-09-03",
+    "urgence": "haute"
+  },
+  {
+    "text": "Dépôt sauvage de matelas et sommiers au niveau du 13 avenue du Général Leclerc",
+    "categorie": "proprete",
+    "quartier": "Val-Notre-Dame",
+    "date": "2025-09-03",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Fissure profond sur la route avenue Jean Jaurès, côté Joliot-Curie, les poussettes ne passent plus",
+    "categorie": "voirie",
+    "quartier": "La Colonie",
+    "date": "2025-09-03",
+    "urgence": "haute"
+  },
+  {
+    "text": "Fuite d'eau devant l'école avenue de la République, il y a une flaque permanente",
+    "categorie": "eau_assainissement",
+    "quartier": "Joliot-Curie",
+    "date": "2025-09-03",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "La rue est vraiment sale à l'angle de la rue Antonin Artaud et du boulevard, c'est pas digne du quartier",
+    "categorie": "proprete",
+    "quartier": "Val-Sud",
+    "date": "2025-09-04",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Fissure profond sur la route au niveau du 54 boulevard du Général Delambre, les voitures font des écarts",
+    "categorie": "voirie",
+    "quartier": "Val-d'Argent",
+    "date": "2025-09-04",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Fuite d'eau près de l'arrêt de bus rue Victor Hugo, il y a une flaque permanente",
+    "categorie": "eau_assainissement",
+    "quartier": "La Colonie",
+    "date": "2025-09-04",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Chantier qui commence même le dimanche matin à côté du parc des Berges",
+    "categorie": "bruit",
+    "quartier": "Mazagran",
+    "date": "2025-09-04",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Mauvaises herbes envahissent le trottoir en face de la pharmacie rue de la Gare",
+    "categorie": "espaces_verts",
+    "quartier": "Centre-ville",
+    "date": "2025-09-04",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Nuisances sonores à l'angle de la boulevard Héloïse et du boulevard à cause d'un chantier non déclaré",
+    "categorie": "bruit",
+    "quartier": "Le Marais",
+    "date": "2025-09-05",
+    "urgence": "basse"
+  },
+  {
+    "text": "Déjections canines partout à côté du parc des Impressionnistes, c'est vraiment dégueulasse",
+    "categorie": "proprete",
+    "quartier": "Orgemont",
+    "date": "2025-09-05",
+    "urgence": "basse"
+  },
+  {
+    "text": "Mégots partout en face de la pharmacie rue de Calais, c'est devant une école en plus",
+    "categorie": "proprete",
+    "quartier": "Le Marais",
+    "date": "2025-09-06",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Panneau d'affichage illisible au niveau du 113 rue Raspail",
+    "categorie": "mobilier_urbain",
+    "quartier": "Val-Sud",
+    "date": "2025-09-06",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Bordure de trottoir soulevé par les racines dans le quartier Mazagran",
+    "categorie": "voirie",
+    "quartier": "La Colonie",
+    "date": "2025-09-06",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Ralentisseur abîmé à côté du parc des Berges, on voit plus la signalisation",
+    "categorie": "voirie",
+    "quartier": "Les Coteaux",
+    "date": "2025-09-06",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Haie non taillée devant l'école rue de Calais, impossible de passer avec une poussette",
+    "categorie": "espaces_verts",
+    "quartier": "Orgemont",
+    "date": "2025-09-06",
+    "urgence": "basse"
+  },
+  {
+    "text": "Travaux très bruyants à côté du parc du Moulin à des heures pas possibles",
+    "categorie": "bruit",
+    "quartier": "Les Coteaux",
+    "date": "2025-09-06",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Pelouse du parc jardin des Coteaux complètement envahie de mauvaises herbes",
+    "categorie": "espaces_verts",
+    "quartier": "Val-Sud",
+    "date": "2025-09-07",
+    "urgence": "haute"
+  },
+  {
+    "text": "Bordure de trottoir fissuré juste après le carrefour rue de Sartrouville",
+    "categorie": "voirie",
+    "quartier": "Val-Sud",
+    "date": "2025-09-07",
+    "urgence": "basse"
+  },
+  {
+    "text": "Fontaine à eau en panne au niveau du 77 impasse des Lilas depuis plusieurs jours",
+    "categorie": "mobilier_urbain",
+    "quartier": "Val-d'Argent",
+    "date": "2025-09-08",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Tags et graffitis au niveau du 18 boulevard du Général Delambre, c'est devenu invivable visuellement",
+    "categorie": "proprete",
+    "quartier": "Val-d'Argent",
+    "date": "2025-09-08",
+    "urgence": "haute"
+  },
+  {
+    "text": "Banc cassé au niveau du 59 rue Henri Barbusse, c'est dangereux pour les enfants",
+    "categorie": "mobilier_urbain",
+    "quartier": "Orgemont",
+    "date": "2025-09-08",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Bouche d'égout bouchée à l'angle de la rue de Sartrouville et du boulevard, odeur insupportable",
+    "categorie": "eau_assainissement",
+    "quartier": "Le Marais",
+    "date": "2025-09-08",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "La rue est vraiment sale boulevard Héloïse, côté Val-Notre-Dame, c'est pas digne du quartier",
+    "categorie": "proprete",
+    "quartier": "Val-d'Argent",
+    "date": "2025-09-09",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Plusieurs lampadaires en panne à l'angle de la rue de Sartrouville et du boulevard",
+    "categorie": "eclairage",
+    "quartier": "Le Marais",
+    "date": "2025-09-09",
+    "urgence": "haute"
+  },
+  {
+    "text": "Travaux très bruyants juste après le carrefour rue des Jardins à des heures pas possibles",
+    "categorie": "bruit",
+    "quartier": "Le Marais",
+    "date": "2025-09-09",
+    "urgence": "basse"
+  },
+  {
+    "text": "Sac poubelle éventré devant l'école boulevard du Général Delambre, ça fait fuir les passants",
+    "categorie": "proprete",
+    "quartier": "Les Champioux",
+    "date": "2025-09-09",
+    "urgence": "basse"
+  },
+  {
+    "text": "Passage piéton effacé au niveau du 33 rue de Sartrouville, les poussettes ne passent plus",
+    "categorie": "voirie",
+    "quartier": "Saint-Denis",
+    "date": "2025-09-10",
+    "urgence": "haute"
+  },
+  {
+    "text": "Tags et graffitis près de l'arrêt de bus avenue de la République, ils sont vraiment partout",
+    "categorie": "proprete",
+    "quartier": "Val-Notre-Dame",
+    "date": "2025-09-10",
+    "urgence": "basse"
+  },
+  {
+    "text": "Mauvaises herbes envahissent le trottoir au niveau du 61 rue des Peupliers",
+    "categorie": "espaces_verts",
+    "quartier": "La Colonie",
+    "date": "2025-09-10",
+    "urgence": "haute"
+  },
+  {
+    "text": "Déjections canines partout juste après le carrefour boulevard Héloïse, ça attire les rats",
+    "categorie": "proprete",
+    "quartier": "Mazagran",
+    "date": "2025-09-11",
+    "urgence": "basse"
+  },
+  {
+    "text": "Arbre mort au niveau du 22 rue Victor Hugo, ça bloque le passage",
+    "categorie": "espaces_verts",
+    "quartier": "Saint-Denis",
+    "date": "2025-09-11",
+    "urgence": "basse"
+  },
+  {
+    "text": "Camion garé en double file en face de la pharmacie avenue du Général Leclerc, impossible de sortir de mon garage",
+    "categorie": "stationnement",
+    "quartier": "Le Marais",
+    "date": "2025-09-11",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Le revêtement de la chaussée est soulevé par les racines à côté du parc des Impressionnistes",
+    "categorie": "voirie",
+    "quartier": "Les Champioux",
+    "date": "2025-09-11",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Borne à vélos hors service devant l'école boulevard du Général Delambre",
+    "categorie": "mobilier_urbain",
+    "quartier": "Joliot-Curie",
+    "date": "2025-09-11",
+    "urgence": "basse"
+  },
+  {
+    "text": "Tags et graffitis à côté du parc des Impressionnistes, c'est devenu invivable visuellement",
+    "categorie": "proprete",
+    "quartier": "Orgemont",
+    "date": "2025-09-12",
+    "urgence": "haute"
+  },
+  {
+    "text": "Mauvaises herbes envahissent le trottoir rue Henri Barbusse, côté La Colonie",
+    "categorie": "espaces_verts",
+    "quartier": "Mazagran",
+    "date": "2025-09-12",
+    "urgence": "basse"
+  },
+  {
+    "text": "Pas d'éclairage dans le passage juste après le carrefour boulevard du Général Delambre, c'est dangereux le soir",
+    "categorie": "eclairage",
+    "quartier": "Val-d'Argent",
+    "date": "2025-09-12",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Canalisation qui fuit devant l'école rue Pierre Semard, ça coule en continu",
+    "categorie": "eau_assainissement",
+    "quartier": "Val-Notre-Dame",
+    "date": "2025-09-12",
+    "urgence": "haute"
+  },
+  {
+    "text": "Borne à vélos hors service à l'angle de la avenue de la République et du boulevard",
+    "categorie": "mobilier_urbain",
+    "quartier": "Les Champioux",
+    "date": "2025-09-12",
+    "urgence": "basse"
+  },
+  {
+    "text": "Voiture ventouse devant l'école rue de la Gare depuis une bonne dizaine de jours",
+    "categorie": "stationnement",
+    "quartier": "Val-Sud",
+    "date": "2025-09-12",
+    "urgence": "basse"
+  },
+  {
+    "text": "Arbre qui soulève le trottoir avec ses racines impasse des Lilas, côté Orgemont, c'est dangereux en cas de vent",
+    "categorie": "espaces_verts",
+    "quartier": "Saint-Denis",
+    "date": "2025-09-12",
+    "urgence": "basse"
+  },
+  {
+    "text": "Encombrants abandonnés à l'angle de la rue Pierre Semard et du boulevard depuis quelques jours",
+    "categorie": "proprete",
+    "quartier": "Val-Sud",
+    "date": "2025-09-12",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Barrière cassé en face de la pharmacie boulevard Héloïse, quelqu'un va se blesser",
+    "categorie": "mobilier_urbain",
+    "quartier": "Le Marais",
+    "date": "2025-09-13",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Tags et graffitis dans le quartier Les Coteaux, ça couvre tout le mur",
+    "categorie": "proprete",
+    "quartier": "Mazagran",
+    "date": "2025-09-13",
+    "urgence": "haute"
+  },
+  {
+    "text": "Tags et graffitis dans le quartier Val-Sud, c'est sur plusieurs mètres",
+    "categorie": "proprete",
+    "quartier": "Saint-Denis",
+    "date": "2025-09-13",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Ralentisseur abîmé juste après le carrefour rue Gustave Eiffel, on voit plus la signalisation",
+    "categorie": "voirie",
+    "quartier": "Val-Sud",
+    "date": "2025-09-13",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Tapage nocturne récurrent devant l'école rue de la Gare, j'ai des enfants en bas âge",
+    "categorie": "bruit",
+    "quartier": "Val-d'Argent",
+    "date": "2025-09-14",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Fontaine à eau en panne juste après le carrefour avenue de Stalingrad depuis depuis le mois dernier",
+    "categorie": "mobilier_urbain",
+    "quartier": "Val-Notre-Dame",
+    "date": "2025-09-14",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Éclairage trop faible à côté du parc du Moulin, c'est dangereux le soir",
+    "categorie": "eclairage",
+    "quartier": "Les Coteaux",
+    "date": "2025-09-14",
+    "urgence": "haute"
+  },
+  {
+    "text": "Arbre qui soulève le trottoir avec ses racines boulevard Héloïse, côté Le Marais, c'est dangereux en cas de vent",
+    "categorie": "espaces_verts",
+    "quartier": "Mazagran",
+    "date": "2025-09-15",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Trottoir cassé devant le 74 rue de Sartrouville, impossible de passer en fauteuil roulant",
+    "categorie": "voirie",
+    "quartier": "Centre-ville",
+    "date": "2025-09-15",
+    "urgence": "haute"
+  },
+  {
+    "text": "Plaque d'égout enfoncée en face de la pharmacie rue Gustave Eiffel, mon voisin s'est déjà fait mal",
+    "categorie": "voirie",
+    "quartier": "Les Coteaux",
+    "date": "2025-09-16",
+    "urgence": "haute"
+  },
+  {
+    "text": "Pas d'éclairage dans le passage près de l'arrêt de bus rue Marcel Cachin, ça craint pour les personnes âgées",
+    "categorie": "eclairage",
+    "quartier": "Val-d'Argent",
+    "date": "2025-09-16",
+    "urgence": "haute"
+  },
+  {
+    "text": "Nid de poule énorme juste après le carrefour rue Émile Zola, c'est dangereux pour les vélos",
+    "categorie": "voirie",
+    "quartier": "Les Champioux",
+    "date": "2025-09-16",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Poubelle cassée près de l'arrêt de bus rue Paul Vaillant-Couturier",
+    "categorie": "proprete",
+    "quartier": "Mazagran",
+    "date": "2025-09-16",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Épave de voiture abandonnée à côté du parc des Impressionnistes depuis plus d'une semaine",
+    "categorie": "stationnement",
+    "quartier": "Les Coteaux",
+    "date": "2025-09-16",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Le revêtement de la chaussée est en très mauvais état à côté du square Héloïse",
+    "categorie": "voirie",
+    "quartier": "Les Coteaux",
+    "date": "2025-09-16",
+    "urgence": "haute"
+  },
+  {
+    "text": "Sac poubelle éventré au niveau du 117 avenue de Stalingrad, c'est vraiment dégueulasse",
+    "categorie": "proprete",
+    "quartier": "Mazagran",
+    "date": "2025-09-17",
+    "urgence": "basse"
+  },
+  {
+    "text": "Ampoule grillée sur le lampadaire devant l'école avenue Jean Jaurès",
+    "categorie": "eclairage",
+    "quartier": "Centre-ville",
+    "date": "2025-09-17",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Fontaine à eau en panne à l'angle de la avenue du Général Leclerc et du boulevard depuis depuis le mois dernier",
+    "categorie": "mobilier_urbain",
+    "quartier": "Val-Sud",
+    "date": "2025-09-17",
+    "urgence": "basse"
+  },
+  {
+    "text": "Éclairage trop faible juste après le carrefour rue Marcel Cachin, ça craint pour les personnes âgées",
+    "categorie": "eclairage",
+    "quartier": "Joliot-Curie",
+    "date": "2025-09-17",
+    "urgence": "haute"
+  },
+  {
+    "text": "Nuisances sonores à l'angle de la rue Émile Zola et du boulevard à cause de motos qui font des rodéos",
+    "categorie": "bruit",
+    "quartier": "Mazagran",
+    "date": "2025-09-17",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Nid de poule profond à côté du jardin des Coteaux, impossible de passer en fauteuil roulant",
+    "categorie": "voirie",
+    "quartier": "Val-Notre-Dame",
+    "date": "2025-09-17",
+    "urgence": "haute"
+  },
+  {
+    "text": "Le lampadaire devant le 63 rue du 8 Mai 1945 est cassé, ma fille a peur de rentrer seule",
+    "categorie": "eclairage",
+    "quartier": "Orgemont",
+    "date": "2025-09-18",
+    "urgence": "haute"
+  },
+  {
+    "text": "Arbre mort près de l'arrêt de bus rue de Sartrouville, les feuilles bouchent les gouttières",
+    "categorie": "espaces_verts",
+    "quartier": "Le Marais",
+    "date": "2025-09-18",
+    "urgence": "haute"
+  },
+  {
+    "text": "Déjections canines partout en face de la pharmacie rue de Sartrouville, ça fait fuir les passants",
+    "categorie": "proprete",
+    "quartier": "Val-d'Argent",
+    "date": "2025-09-19",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Sac poubelle éventré à l'angle de la rue des Jardins et du boulevard, ça pue surtout en été",
+    "categorie": "proprete",
+    "quartier": "Val-Notre-Dame",
+    "date": "2025-09-19",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Mégots partout dans le quartier Saint-Denis, il n'y a aucun cendrier à proximité",
+    "categorie": "proprete",
+    "quartier": "Orgemont",
+    "date": "2025-09-20",
+    "urgence": "haute"
+  },
+  {
+    "text": "Chantier qui commence même le dimanche matin dans le quartier Mazagran",
+    "categorie": "bruit",
+    "quartier": "Centre-ville",
+    "date": "2025-09-20",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Éclairage trop faible en face de la pharmacie avenue du Général Leclerc, ça craint pour les personnes âgées",
+    "categorie": "eclairage",
+    "quartier": "Orgemont",
+    "date": "2025-09-20",
+    "urgence": "basse"
+  },
+  {
+    "text": "Véhicule garé sur le trottoir près de l'arrêt de bus avenue Gabriel Péri, les pompiers ne pourraient pas passer",
+    "categorie": "stationnement",
+    "quartier": "Les Coteaux",
+    "date": "2025-09-20",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Plaque d'égout mal fixée rue Marcel Cachin, côté Le Marais, c'est dangereux pour les vélos",
+    "categorie": "voirie",
+    "quartier": "La Colonie",
+    "date": "2025-09-20",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Voiture ventouse juste après le carrefour avenue Jean Jaurès depuis 2 semaines",
+    "categorie": "stationnement",
+    "quartier": "Mazagran",
+    "date": "2025-09-20",
+    "urgence": "haute"
+  },
+  {
+    "text": "Dépôt sauvage de matelas et sommiers à côté du parc des Berges",
+    "categorie": "proprete",
+    "quartier": "La Colonie",
+    "date": "2025-09-20",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Camion garé en double file juste après le carrefour rue Henri Barbusse, les piétons doivent marcher sur la route",
+    "categorie": "stationnement",
+    "quartier": "Val-Sud",
+    "date": "2025-09-21",
+    "urgence": "basse"
+  },
+  {
+    "text": "Ampoule grillée sur le lampadaire devant l'école rue du 8 Mai 1945",
+    "categorie": "eclairage",
+    "quartier": "Orgemont",
+    "date": "2025-09-21",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Banc cassé avenue du Général Leclerc, côté Les Coteaux, il manque des parties",
+    "categorie": "mobilier_urbain",
+    "quartier": "Mazagran",
+    "date": "2025-09-21",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Abribus sans banc à l'arrêt Les Coteaux",
+    "categorie": "mobilier_urbain",
+    "quartier": "Val-d'Argent",
+    "date": "2025-09-22",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Sac poubelle éventré à l'angle de la avenue Jean Jaurès et du boulevard, c'est vraiment dégueulasse",
+    "categorie": "proprete",
+    "quartier": "Joliot-Curie",
+    "date": "2025-09-22",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Haie non taillée en face de la pharmacie rue de Calais, impossible de passer avec une poussette",
+    "categorie": "espaces_verts",
+    "quartier": "Mazagran",
+    "date": "2025-09-23",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Route inondée près de l'arrêt de bus allée des Tilleuls à chaque pluie, impossible de passer en fauteuil roulant",
+    "categorie": "voirie",
+    "quartier": "Les Coteaux",
+    "date": "2025-09-23",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Véhicule garé sur le trottoir à l'angle de la rue Paul Vaillant-Couturier et du boulevard, ça bloque la visibilité au carrefour",
+    "categorie": "stationnement",
+    "quartier": "Orgemont",
+    "date": "2025-09-23",
+    "urgence": "haute"
+  },
+  {
+    "text": "Stationnement gênant en face de la pharmacie rue Victor Hugo, les piétons doivent marcher sur la route",
+    "categorie": "stationnement",
+    "quartier": "Saint-Denis",
+    "date": "2025-09-24",
+    "urgence": "basse"
+  },
+  {
+    "text": "Haie non taillée dans le quartier Joliot-Curie, ça bloque le passage",
+    "categorie": "espaces_verts",
+    "quartier": "Les Champioux",
+    "date": "2025-09-24",
+    "urgence": "basse"
+  },
+  {
+    "text": "Éclairage trop faible à côté du parc du Moulin, on n'y voit rien la nuit",
+    "categorie": "eclairage",
+    "quartier": "Le Marais",
+    "date": "2025-09-24",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Plusieurs lampadaires en panne au niveau du 4 avenue de Stalingrad",
+    "categorie": "eclairage",
+    "quartier": "Orgemont",
+    "date": "2025-09-25",
+    "urgence": "haute"
+  },
+  {
+    "text": "Plaque d'égout manquante à côté du parc des Berges, c'est dangereux pour les vélos",
+    "categorie": "voirie",
+    "quartier": "Centre-ville",
+    "date": "2025-09-25",
+    "urgence": "haute"
+  },
+  {
+    "text": "Bordure de trottoir soulevé par les racines à côté du parc des Berges",
+    "categorie": "voirie",
+    "quartier": "Les Champioux",
+    "date": "2025-09-25",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Lampadaire éteint au niveau du 37 rue de Calais depuis une bonne dizaine de jours, c'est dangereux le soir",
+    "categorie": "eclairage",
+    "quartier": "Joliot-Curie",
+    "date": "2025-09-26",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Encombrants abandonnés en face de la pharmacie rue Henri Barbusse depuis presque un mois",
+    "categorie": "proprete",
+    "quartier": "Val-Sud",
+    "date": "2025-09-26",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Abribus avec la vitre cassée à l'arrêt Val-d'Argent",
+    "categorie": "mobilier_urbain",
+    "quartier": "Orgemont",
+    "date": "2025-09-27",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Haie non taillée près de l'arrêt de bus rue de Calais, les feuilles bouchent les gouttières",
+    "categorie": "espaces_verts",
+    "quartier": "Orgemont",
+    "date": "2025-09-27",
+    "urgence": "basse"
+  },
+  {
+    "text": "Canalisation qui fuit en face de la pharmacie rue Gustave Eiffel, il y a une flaque permanente",
+    "categorie": "eau_assainissement",
+    "quartier": "Joliot-Curie",
+    "date": "2025-09-27",
+    "urgence": "basse"
+  },
+  {
+    "text": "Stationnement gênant près de l'arrêt de bus rue Raspail, ça bloque la visibilité au carrefour",
+    "categorie": "stationnement",
+    "quartier": "Les Champioux",
+    "date": "2025-09-28",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "La rue est vraiment sale près de l'arrêt de bus avenue de Stalingrad, ça pue surtout en été",
+    "categorie": "proprete",
+    "quartier": "Val-Notre-Dame",
+    "date": "2025-09-28",
+    "urgence": "basse"
+  },
+  {
+    "text": "Poteau de signalisation penché dangereusement en face de la pharmacie allée des Tilleuls",
+    "categorie": "mobilier_urbain",
+    "quartier": "Val-Sud",
+    "date": "2025-09-29",
+    "urgence": "basse"
+  },
+  {
+    "text": "Éclairage trop faible dans le quartier Les Coteaux, ça craint pour les personnes âgées",
+    "categorie": "eclairage",
+    "quartier": "Val-Notre-Dame",
+    "date": "2025-09-29",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Épave de voiture abandonnée à côté du parc des Impressionnistes depuis plus d'une semaine",
+    "categorie": "stationnement",
+    "quartier": "La Colonie",
+    "date": "2025-09-29",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Dépôt sauvage de déchets de chantier rue Victor Hugo, côté Saint-Denis",
+    "categorie": "proprete",
+    "quartier": "Les Coteaux",
+    "date": "2025-09-29",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Sac poubelle éventré juste après le carrefour rue Paul Vaillant-Couturier, ça fait fuir les passants",
+    "categorie": "proprete",
+    "quartier": "Joliot-Curie",
+    "date": "2025-09-30",
+    "urgence": "haute"
+  },
+  {
+    "text": "La rue est vraiment sale au niveau du 53 rue Pierre Semard, ça fait fuir les passants",
+    "categorie": "proprete",
+    "quartier": "Val-Sud",
+    "date": "2025-09-30",
+    "urgence": "basse"
+  },
+  {
+    "text": "Pas d'éclairage dans le passage boulevard Héloïse, côté Saint-Denis, on n'y voit rien la nuit",
+    "categorie": "eclairage",
+    "quartier": "Orgemont",
+    "date": "2025-09-30",
+    "urgence": "basse"
+  },
+  {
+    "text": "Voiture ventouse au niveau du 67 rue de Sartrouville depuis quelques jours",
+    "categorie": "stationnement",
+    "quartier": "Joliot-Curie",
+    "date": "2025-09-30",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Poteau de signalisation tordu rue Victor Hugo, côté Mazagran",
+    "categorie": "mobilier_urbain",
+    "quartier": "La Colonie",
+    "date": "2025-09-30",
+    "urgence": "basse"
+  },
+  {
+    "text": "La rue est vraiment sale près de l'arrêt de bus avenue de Stalingrad, ça attire les rats",
+    "categorie": "proprete",
+    "quartier": "Le Marais",
+    "date": "2025-09-30",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Branche de taille moyenne qui dépasse sur le trottoir à l'angle de la rue de la Gare et du boulevard",
+    "categorie": "espaces_verts",
+    "quartier": "Le Marais",
+    "date": "2025-09-30",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Barrière fissuré rue Pierre Semard, côté Le Marais, quelqu'un va se blesser",
+    "categorie": "mobilier_urbain",
+    "quartier": "Joliot-Curie",
+    "date": "2025-09-30",
+    "urgence": "haute"
+  },
+  {
+    "text": "Camion garé en double file juste après le carrefour rue de la Gare, les piétons doivent marcher sur la route",
+    "categorie": "stationnement",
+    "quartier": "Les Champioux",
+    "date": "2025-10-01",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Fontaine à eau en panne à l'angle de la rue de la Gare et du boulevard depuis depuis le mois dernier",
+    "categorie": "mobilier_urbain",
+    "quartier": "Les Champioux",
+    "date": "2025-10-01",
+    "urgence": "basse"
+  },
+  {
+    "text": "Alarme qui sonne en continu en face de la pharmacie rue Paul Vaillant-Couturier depuis 2 semaines",
+    "categorie": "bruit",
+    "quartier": "Joliot-Curie",
+    "date": "2025-10-01",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Odeur d'égout très forte près de l'arrêt de bus avenue Gabriel Péri",
+    "categorie": "eau_assainissement",
+    "quartier": "Joliot-Curie",
+    "date": "2025-10-01",
+    "urgence": "basse"
+  },
+  {
+    "text": "Bordure de trottoir cassé à l'angle de la rue de la Gare et du boulevard",
+    "categorie": "voirie",
+    "quartier": "Joliot-Curie",
+    "date": "2025-10-01",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Poteau de signalisation tagué et illisible à l'angle de la rue des Peupliers et du boulevard",
+    "categorie": "mobilier_urbain",
+    "quartier": "Joliot-Curie",
+    "date": "2025-10-02",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Dépôt sauvage de cartons et emballages en face de la pharmacie rue Raspail",
+    "categorie": "proprete",
+    "quartier": "Les Coteaux",
+    "date": "2025-10-02",
+    "urgence": "basse"
+  },
+  {
+    "text": "Stationnement gênant à l'angle de la boulevard du Général Delambre et du boulevard, les pompiers ne pourraient pas passer",
+    "categorie": "stationnement",
+    "quartier": "Les Coteaux",
+    "date": "2025-10-02",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Eau stagnante à côté du square Héloïse depuis 2 semaines",
+    "categorie": "eau_assainissement",
+    "quartier": "Mazagran",
+    "date": "2025-10-02",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Ralentisseur abîmé à l'angle de la rue Victor Hugo et du boulevard, on voit plus la signalisation",
+    "categorie": "voirie",
+    "quartier": "Val-Notre-Dame",
+    "date": "2025-10-02",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Odeur d'égout très forte à côté du parc des Impressionnistes",
+    "categorie": "eau_assainissement",
+    "quartier": "Val-Sud",
+    "date": "2025-10-03",
+    "urgence": "basse"
+  },
+  {
+    "text": "Bordure de trottoir abîmé depuis longtemps au niveau du 43 rue des Peupliers",
+    "categorie": "voirie",
+    "quartier": "Orgemont",
+    "date": "2025-10-03",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Passage piéton effacé dans le quartier Le Marais, mon voisin s'est déjà fait mal",
+    "categorie": "voirie",
+    "quartier": "Val-d'Argent",
+    "date": "2025-10-04",
+    "urgence": "basse"
+  },
+  {
+    "text": "Encombrants abandonnés devant l'école rue Gustave Eiffel depuis presque un mois",
+    "categorie": "proprete",
+    "quartier": "Orgemont",
+    "date": "2025-10-04",
+    "urgence": "basse"
+  },
+  {
+    "text": "Trottoir complètement défoncé devant le 103 rue Gustave Eiffel, ça gêne la circulation",
+    "categorie": "voirie",
+    "quartier": "Val-Sud",
+    "date": "2025-10-04",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Ampoule grillée sur le lampadaire rue du 8 Mai 1945, côté Orgemont",
+    "categorie": "eclairage",
+    "quartier": "Val-Sud",
+    "date": "2025-10-04",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Fissure dangereux sur la route à côté du square Héloïse, risque de chute pour les piétons",
+    "categorie": "voirie",
+    "quartier": "Joliot-Curie",
+    "date": "2025-10-05",
+    "urgence": "haute"
+  },
+  {
+    "text": "Pas d'éclairage dans le passage à côté du square Jean Macé, c'est dangereux le soir",
+    "categorie": "eclairage",
+    "quartier": "Val-Notre-Dame",
+    "date": "2025-10-06",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Bordure de trottoir abîmé depuis longtemps dans le quartier La Colonie",
+    "categorie": "voirie",
+    "quartier": "La Colonie",
+    "date": "2025-10-06",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Bordure de trottoir abîmé depuis longtemps à l'angle de la rue Émile Zola et du boulevard",
+    "categorie": "voirie",
+    "quartier": "Les Coteaux",
+    "date": "2025-10-06",
+    "urgence": "basse"
+  },
+  {
+    "text": "Pas d'éclairage dans le passage près de l'arrêt de bus impasse des Lilas, c'est dangereux le soir",
+    "categorie": "eclairage",
+    "quartier": "Val-Notre-Dame",
+    "date": "2025-10-07",
+    "urgence": "haute"
+  },
+  {
+    "text": "Panneau d'affichage illisible devant l'école rue Émile Zola",
+    "categorie": "mobilier_urbain",
+    "quartier": "La Colonie",
+    "date": "2025-10-07",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Bordure de trottoir soulevé par les racines devant l'école rue de la Gare",
+    "categorie": "voirie",
+    "quartier": "Saint-Denis",
+    "date": "2025-10-07",
+    "urgence": "basse"
+  },
+  {
+    "text": "Passage piéton effacé à côté du parc des Impressionnistes, risque de chute pour les piétons",
+    "categorie": "voirie",
+    "quartier": "Mazagran",
+    "date": "2025-10-07",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Poubelle jamais vidée près de l'arrêt de bus rue de Sartrouville",
+    "categorie": "proprete",
+    "quartier": "La Colonie",
+    "date": "2025-10-08",
+    "urgence": "basse"
+  },
+  {
+    "text": "Poubelle qui déborde depuis 3 jours devant l'école rue du 8 Mai 1945",
+    "categorie": "proprete",
+    "quartier": "Val-Sud",
+    "date": "2025-10-08",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Chantier qui commence même le dimanche matin rue des Jardins, côté Le Marais",
+    "categorie": "bruit",
+    "quartier": "Les Champioux",
+    "date": "2025-10-08",
+    "urgence": "basse"
+  },
+  {
+    "text": "Tags et graffitis en face de la pharmacie rue de Calais, c'est devenu invivable visuellement",
+    "categorie": "proprete",
+    "quartier": "Val-Sud",
+    "date": "2025-10-09",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Tags et graffitis dans le quartier Joliot-Curie, c'est devenu invivable visuellement",
+    "categorie": "proprete",
+    "quartier": "Val-Notre-Dame",
+    "date": "2025-10-09",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Odeur d'égout très forte devant l'école rue Gustave Eiffel",
+    "categorie": "eau_assainissement",
+    "quartier": "Centre-ville",
+    "date": "2025-10-09",
+    "urgence": "haute"
+  },
+  {
+    "text": "Arbre mort près de l'arrêt de bus rue Victor Hugo, ça bloque le passage",
+    "categorie": "espaces_verts",
+    "quartier": "La Colonie",
+    "date": "2025-10-10",
+    "urgence": "basse"
+  },
+  {
+    "text": "Alarme qui sonne en continu près de l'arrêt de bus boulevard Héloïse depuis depuis le mois dernier",
+    "categorie": "bruit",
+    "quartier": "Centre-ville",
+    "date": "2025-10-10",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Fissure de taille moyenne sur la route dans le quartier Saint-Denis, c'est un vrai danger",
+    "categorie": "voirie",
+    "quartier": "Orgemont",
+    "date": "2025-10-11",
+    "urgence": "basse"
+  },
+  {
+    "text": "Déjections canines partout en face de la pharmacie rue Raspail, ça pue surtout en été",
+    "categorie": "proprete",
+    "quartier": "Mazagran",
+    "date": "2025-10-11",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Eau stagnante près de l'arrêt de bus rue Émile Zola depuis quelques jours",
+    "categorie": "eau_assainissement",
+    "quartier": "Les Coteaux",
+    "date": "2025-10-12",
+    "urgence": "haute"
+  },
+  {
+    "text": "Bordure de trottoir soulevé par les racines à l'angle de la avenue Jean Jaurès et du boulevard",
+    "categorie": "voirie",
+    "quartier": "Centre-ville",
+    "date": "2025-10-12",
+    "urgence": "basse"
+  },
+  {
+    "text": "Abribus avec la vitre cassée à l'arrêt Gabriel Péri",
+    "categorie": "mobilier_urbain",
+    "quartier": "Mazagran",
+    "date": "2025-10-12",
+    "urgence": "basse"
+  },
+  {
+    "text": "Trottoir en très mauvais état devant le 103 rue Henri Barbusse, ça gêne la circulation",
+    "categorie": "voirie",
+    "quartier": "Saint-Denis",
+    "date": "2025-10-13",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Chantier qui commence même le dimanche matin en face de la pharmacie rue de la Gare",
+    "categorie": "bruit",
+    "quartier": "Val-Notre-Dame",
+    "date": "2025-10-13",
+    "urgence": "haute"
+  },
+  {
+    "text": "Passage piéton effacé à l'angle de la rue du 8 Mai 1945 et du boulevard, c'est dangereux pour les vélos",
+    "categorie": "voirie",
+    "quartier": "Le Marais",
+    "date": "2025-10-14",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Bordure de trottoir complètement défoncé à l'angle de la rue du 8 Mai 1945 et du boulevard",
+    "categorie": "voirie",
+    "quartier": "Val-Notre-Dame",
+    "date": "2025-10-14",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Canalisation qui fuit à l'angle de la rue des Peupliers et du boulevard, ça coule en continu",
+    "categorie": "eau_assainissement",
+    "quartier": "Les Champioux",
+    "date": "2025-10-14",
+    "urgence": "haute"
+  },
+  {
+    "text": "Fissure énorme sur la route à côté du parc des Berges, c'est dangereux pour les vélos",
+    "categorie": "voirie",
+    "quartier": "Les Coteaux",
+    "date": "2025-10-14",
+    "urgence": "basse"
+  },
+  {
+    "text": "Tapage nocturne récurrent juste après le carrefour impasse des Lilas, les voisins en ont tous marre",
+    "categorie": "bruit",
+    "quartier": "Les Coteaux",
+    "date": "2025-10-15",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Fissure énorme sur la route à côté du jardin des Coteaux, c'est dangereux pour les vélos",
+    "categorie": "voirie",
+    "quartier": "Les Coteaux",
+    "date": "2025-10-15",
+    "urgence": "basse"
+  },
+  {
+    "text": "Ampoule grillée sur le lampadaire à l'angle de la rue de la Gare et du boulevard",
+    "categorie": "eclairage",
+    "quartier": "Le Marais",
+    "date": "2025-10-15",
+    "urgence": "haute"
+  },
+  {
+    "text": "Branche de taille moyenne qui dépasse sur le trottoir à côté du parc des Berges",
+    "categorie": "espaces_verts",
+    "quartier": "Mazagran",
+    "date": "2025-10-16",
+    "urgence": "basse"
+  },
+  {
+    "text": "Le revêtement de la chaussée est en très mauvais état juste après le carrefour avenue de Stalingrad",
+    "categorie": "voirie",
+    "quartier": "Mazagran",
+    "date": "2025-10-16",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Pas d'éclairage dans le passage près de l'arrêt de bus rue de la Gare, il y a eu des incidents",
+    "categorie": "eclairage",
+    "quartier": "Mazagran",
+    "date": "2025-10-16",
+    "urgence": "haute"
+  },
+  {
+    "text": "Mégots partout dans le quartier Les Coteaux, ça donne une image déplorable",
+    "categorie": "proprete",
+    "quartier": "Les Coteaux",
+    "date": "2025-10-17",
+    "urgence": "moyenne"
+  },
+  {
+    "text": "Dépôt sauvage de matelas et sommiers boulevard Héloïse, côté Val-d'Argent",
+    "categorie": "proprete",
+    "quartier": "Centre-ville",
+    "date": "2025-10-17",
+    "urgence": "basse"
+  }
+]
