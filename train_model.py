@@ -4,12 +4,6 @@
 #   PROJET EDP
 #####
 
-"""
-Train RandomForest baseline model for Municip'All IA
-- Loads artifacts/preprocessed.csv and tfidf.joblib
-- Builds feature matrix (text TFIDF + simple tabular features)
-- Trains RandomForest, evaluates, saves model + metrics
-"""
 from pathlib import Path
 import pandas as pd
 import numpy as np
@@ -28,17 +22,15 @@ METRICS_PATH = ART / "metrics.json"
 ENC_PATH = ART / "geo_onehot.joblib"
 
 def build_features(df: pd.DataFrame):
-    # Text
     tfidf = joblib.load(TFIDF_PATH)
     X_text = tfidf.transform(df["description"].values)
-
-    # Tabular: hour and geo bucket (one-hot)
-    enc = OneHotEncoder(handle_unknown="ignore", sparse=True)
+    try:
+        enc = OneHotEncoder(handle_unknown="ignore", sparse_output=True)
+    except TypeError:
+        enc = OneHotEncoder(handle_unknown="ignore", sparse=True)
     X_geo = enc.fit_transform(df[["geo_bucket"]])
     joblib.dump(enc, ENC_PATH)
-
     X_hour = csr_matrix(df[["hour"]].values)
-
     X = hstack([X_text, X_geo, X_hour], format="csr")
     return X, tfidf, enc
 

@@ -23,7 +23,8 @@ class Predictor:
 
     def predict(self, description: str, geo_bucket: str, hour: int):
         X_text = self.tfidf.transform([description or ""])
-        X_geo = self.enc.transform([[geo_bucket]])
+        geo_df = pd.DataFrame({"geo_bucket": [geo_bucket]})
+        X_geo = self.enc.transform(geo_df)
         X_hour = csr_matrix([[hour]])
         X = hstack([X_text, X_geo, X_hour], format="csr")
         proba = self.model.predict_proba(X)[0]

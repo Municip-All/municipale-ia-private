@@ -1,6 +1,7 @@
 fastapi
 uvicorn
 pydantic
+httpx
 pandas
 numpy
 scikit-learn
@@ -8,3 +9,8 @@ scipy
 joblib
 redis
 qdrant-client
+# MCP + Reporting (Python 3.10+ requis pour le package mcp)
+mcp[cli]>=1.0
+psycopg[binary]>=3.0
+sentence-transformers>=3.0
+pytest>=7.0

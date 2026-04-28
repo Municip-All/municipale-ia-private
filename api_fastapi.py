@@ -4,17 +4,12 @@
 #   PROJET EDP
 #####
 
-"""
-FastAPI serving IA predictions with Swagger.
-Endpoints:
-- POST /predict
-- GET /health
-- (stub) GET /stats
-"""
+
 from fastapi import FastAPI
 from pydantic import BaseModel
 from utils import geo_bucket, stable_hash
 from model_inference import Predictor
+from reporting_routes import router as reporting_router
 
 try:
     import redis
@@ -23,6 +18,7 @@ except Exception:
     REDIS_AVAIL = False
 
 app = FastAPI(title="Municip'All IA API", version="0.1.0")
+app.include_router(reporting_router)
 predictor = None
 rds = None
 
@@ -73,6 +69,5 @@ def health():
 
 @app.get("/stats")
 def stats():
-    # stub for demo
     return {"info": "aggregate stats would be computed here"}
 

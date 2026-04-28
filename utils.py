@@ -9,10 +9,6 @@ import json
 from pathlib import Path
 
 def geo_bucket(lat: float, lon: float, size_m: int = 500) -> str:
-    """
-    Very simple spatial bucketing by rounding lat/lon to ~grid cell.
-    1 degree lat ≈ 111_000 m. We approximate for demo purposes.
-    """
     if lat is None or lon is None:
         return "NA"
     cell = size_m / 111_000.0
