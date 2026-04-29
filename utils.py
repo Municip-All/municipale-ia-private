@@ -5,8 +5,7 @@
 #####
 
 import hashlib
-import json
-from pathlib import Path
+
 
 def geo_bucket(lat: float, lon: float, size_m: int = 500) -> str:
     if lat is None or lon is None:
@@ -18,12 +17,3 @@ def geo_bucket(lat: float, lon: float, size_m: int = 500) -> str:
 
 def stable_hash(s: str) -> str:
     return hashlib.sha256((s or "").encode("utf-8")).hexdigest()[:16]
-
-def save_json(path: str, data: dict):
-    Path(path).parent.mkdir(parents=True, exist_ok=True)
-    with open(path, "w", encoding="utf-8") as f:
-        json.dump(data, f, indent=2, ensure_ascii=False)
-
-def load_json(path: str) -> dict:
-    with open(path, "r", encoding="utf-8") as f:
-        return json.load(f)
