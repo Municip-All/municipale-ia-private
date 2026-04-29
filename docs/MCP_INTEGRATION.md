@@ -24,8 +24,9 @@ Initialiser la base :
 ```bash
 psql -d municipall -f db/schema.sql
 export DATABASE_URL=postgresql://user:mdp@localhost:5432/municipall
-python scripts/seed_synthetic_pg.py --truncate
 ```
+
+Pour remplir la base : **`POST /reporting/submit`** (API FastAPI) ou requêtes SQL manuelles.
 
 ## Démarrage du serveur MCP (stdio)
 
