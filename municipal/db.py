@@ -44,7 +44,6 @@ def find_nearest_report_by_embedding(
         return {"found": False, "message": "embedding_vide"}
     # Format attendu par pgvector : cast texte explicite, paramètres bind uniquement
     import psycopg
-    from psycopg import sql
 
     vec_literal = "[" + ",".join(str(float(x)) for x in embedding) + "]"
     excl: Optional[UUID] = None

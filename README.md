@@ -111,12 +111,29 @@ Intégration **Cursor / Claude Desktop** : voir `docs/MCP_INTEGRATION.md`.
 
 ---
 
-## Tests
+## Tests (cas d’usage)
 
 ```bash
-pytest tests/test_mistral_client.py -m "not integration"   # hors ligne
-pytest tests/test_mistral_client.py -m integration         # appel API Mistral réel si clé présente
+pip install -r requirements.txt
 ```
+
+| Commande | Contenu |
+|----------|---------|
+| `pytest tests/ -m "not integration and not postgres and not slow"` | **Suite par défaut** : spam/sentiment, analyzer mocké, pipeline mocké, API `/reporting` mockée, client Mistral mocké. Rapide, sans Postgres ni réseau. |
+| `pytest tests/ -m postgres` | Flux **réels** avec `DATABASE_URL` : spam en base, doublon identique, tri urgences (`top_urgent`). Nettoie les lignes créées. |
+| `pytest tests/ -m slow` | Routage `smart_route` avec **sentence-transformers** (téléchargement modèle possible, ~10–60 s la première fois). |
+| `pytest tests/ -m integration` | Appel **HTTP Mistral** réel si `MISTRAL_API_KEY` est définie. |
+| `pytest tests/test_predict_optional.py` | `/predict` + `/health` si `artifacts/*.joblib` présents (sinon *skipped*). |
+
+Exemple d’enchaînement complet en local :
+
+```bash
+pytest tests/ -v -m "not integration and not postgres and not slow"
+export DATABASE_URL="postgresql://..."
+pytest tests/test_postgres_workflows.py -v -m postgres
+```
+
+Fichiers principaux : `tests/test_spam_sentiment_cases.py`, `test_analyzer_unit.py`, `test_pipeline_mocked.py`, `test_api_reporting_cases.py`, `test_postgres_workflows.py`, `test_router_slow.py`, `test_mistral_client.py`, `test_predict_optional.py`.
 
 ---
 
