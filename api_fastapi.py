@@ -67,7 +67,3 @@ def predict(payload: PredictIn):
 def health():
     return {"status": "ok", "model_loaded": predictor is not None}
 
-@app.get("/stats")
-def stats():
-    return {"info": "aggregate stats would be computed here"}
-
