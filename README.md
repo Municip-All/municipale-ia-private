@@ -27,10 +27,8 @@ pip install -r requirements.txt
 | `municipal/` | Logique reporting : embeddings locaux, analyse spam/sentiment, doublons pgvector, routage catégorie/service, client Mistral. |
 | `mcp_municipal.py` | Serveur **MCP** (stdio) exposant `smart-analyzer`, `duplicate-finder`, `smart-router`. |
 | `db/schema.sql` | Schéma SQL (`reports`, enum de statut, `vector(384)`). |
-| `scripts/seed_synthetic_pg.py` | Peuplement synthétique de la base (spams, doublons, sentiments variés). |
-| `docs/MCP_INTEGRATION.md` | Configuration MCP, variables Mistral, tests, dépannage. |
+| `docs/MCP_INTEGRATION.md` | Configuration MCP (Cursor), variables Mistral, dépannage. |
 | `main.py` | Point d’entrée du pipeline ML complet (prétraitement + entraînement + démo). |
-| `qdrant/` | Code lié à Qdrant (expérimentation / autre brique Vector). |
 
 ---
 
@@ -77,11 +75,7 @@ Sans Redis, `/predict` fonctionne sans cache.
    export DATABASE_URL="postgresql://utilisateur:secret@localhost:5432/municipall"
    ```
 
-3. (Optionnel) Remplir des données de test :
-
-   ```bash
-   python scripts/seed_synthetic_pg.py --truncate
-   ```
+3. (Optionnel) Insérer des signalements via **`POST /reporting/submit`** (voir **http://127.0.0.1:8000/docs** une fois l’API lancée) ou avec du SQL dans `psql`.
 
 **Routes utiles** (même process `uvicorn` que ci-dessus) :
 
