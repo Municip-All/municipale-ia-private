@@ -9,7 +9,7 @@ from municipal.db import find_nearest_report_by_embedding
 
 def duplicate_finder(
     embedding: list[float],
-    exclude_report_id: str | None = None,
+    exclude_report_id: int | None = None,
     threshold: float | None = None,
 ) -> dict[str, Any]:
     t = float(threshold if threshold is not None else DUPLICATE_SIMILARITY_THRESHOLD)
@@ -18,7 +18,7 @@ def duplicate_finder(
 
 def duplicate_finder_json(
     embedding: list[float],
-    exclude_report_id: str | None = None,
+    exclude_report_id: int | None = None,
     threshold: float | None = None,
 ) -> str:
     return json.dumps(
