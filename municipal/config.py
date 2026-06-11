@@ -10,7 +10,23 @@ DUPLICATE_SIMILARITY_THRESHOLD = float(
     os.environ.get("MUNICIPAL_DUPLICATE_THRESHOLD", "0.85")
 )
 
-DATABASE_URL = os.environ.get("DATABASE_URL", "")
+# Cosinus max(ancrage) sous ce seuil → catégorie « Autre » (bruit / faible confiance)
+ROUTER_MIN_COSINE_SIM = float(os.environ.get("MUNICIPAL_ROUTE_MIN_COSINE", "0.22"))
+
+def _build_database_url() -> str:
+    """Construit DATABASE_URL depuis l'URL complète ou les variables séparées."""
+    url = os.environ.get("DATABASE_URL", "").strip()
+    if url:
+        return url
+    # Fallback : variables séparées (compatibilité NestJS)
+    host = os.environ.get("DATABASE_HOST", "localhost")
+    port = os.environ.get("DATABASE_PORT", "5432")
+    user = os.environ.get("DATABASE_USER", "postgres")
+    password = os.environ.get("DATABASE_PASSWORD", "password")
+    db = os.environ.get("DATABASE_NAME", "municipall")
+    return f"postgresql://{user}:{password}@{host}:{port}/{db}"
+
+DATABASE_URL = _build_database_url()
 
 # Mistral (NumSpot) — clé jamais committée ; définir MISTRAL_API_KEY dans l'environnement
 MISTRAL_API_BASE = os.environ.get(
