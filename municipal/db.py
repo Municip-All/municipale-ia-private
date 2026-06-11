@@ -3,7 +3,6 @@ from __future__ import annotations
 import os
 from contextlib import contextmanager
 from typing import Any, Generator, Optional
-from uuid import UUID
 
 from municipal.config import DATABASE_URL
 
@@ -32,41 +31,89 @@ def get_connection() -> Generator[Any, None, None]:
         yield conn
 
 
+def enrich_report(
+    report_id: int,
+    tenant_id: str,
+    content: str,
+    category: str,
+    municipal_service: str,
+    sentiment_score: float,
+    embedding: list[float],
+    is_spam: bool,
+    duplicate_of_id: int | None,
+) -> None:
+    """
+    Enrichit un signalement existant créé par le backend NestJS avec les résultats IA.
+    Met à jour : category, ai_category, municipal_service, sentiment_score, embedding,
+                  is_spam, duplicate_of_id, ai_processed.
+    """
+    vec = "[" + ",".join(str(float(x)) for x in embedding) + "]"
+    with get_connection() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                """
+                UPDATE reports
+                SET
+                  category          = %s,
+                  ai_category       = %s,
+                  municipal_service = %s,
+                  sentiment_score   = %s,
+                  embedding         = %s::vector,
+                  is_spam           = %s,
+                  duplicate_of_id   = %s,
+                  ai_processed      = TRUE
+                WHERE id = %s AND tenant_id = %s
+                """,
+                (
+                    category,
+                    category,
+                    municipal_service,
+                    float(sentiment_score),
+                    vec,
+                    is_spam,
+                    int(duplicate_of_id) if duplicate_of_id else None,
+                    int(report_id),
+                    tenant_id,
+                ),
+            )
+        conn.commit()
+
+
 def find_nearest_report_by_embedding(
     embedding: list[float],
-    exclude_id: str | None,
+    exclude_id: int | None,
     threshold: float,
 ) -> dict[str, Any]:
     """
     Cosinus (pgvector) : similarité = 1 - distance_cosinus, avec vecteurs normalisés.
+    Filtre les signalements non-spam / non-duplicate, exclut le report portant exclude_id.
     """
     if not embedding:
         return {"found": False, "message": "embedding_vide"}
-    # Format attendu par pgvector : cast texte explicite, paramètres bind uniquement
-    import psycopg
-
     vec_literal = "[" + ",".join(str(float(x)) for x in embedding) + "]"
-    excl: Optional[UUID] = None
-    if exclude_id:
-        try:
-            excl = UUID(exclude_id)
-        except ValueError:
-            excl = None
     with get_connection() as conn:
         with conn.cursor() as cur:
-            q = """
-                SELECT id::text, status::text,
-                       1 - (embedding <=> %s::vector) AS sim
-                FROM reports
-                WHERE (%s::uuid IS NULL OR id IS DISTINCT FROM %s::uuid)
-                  AND status::text NOT IN ('Duplicate', 'Spam')
-                ORDER BY embedding <=> %s::vector
-                LIMIT 1
-            """
-            cur.execute(
-                q,
-                (vec_literal, excl, excl, vec_literal),
-            )
+            if exclude_id is not None:
+                q = """
+                    SELECT id, status,
+                           1 - (embedding <=> %s::vector) AS sim
+                    FROM reports
+                    WHERE id <> %s
+                      AND status NOT IN ('Duplicate', 'Spam', 'Doublon', 'Rejeté')
+                    ORDER BY embedding <=> %s::vector
+                    LIMIT 1
+                """
+                cur.execute(q, (vec_literal, exclude_id, vec_literal))
+            else:
+                q = """
+                    SELECT id, status,
+                           1 - (embedding <=> %s::vector) AS sim
+                    FROM reports
+                    WHERE status NOT IN ('Duplicate', 'Spam', 'Doublon', 'Rejeté')
+                    ORDER BY embedding <=> %s::vector
+                    LIMIT 1
+                """
+                cur.execute(q, (vec_literal, vec_literal))
             row = cur.fetchone()
             if not row:
                 return {"found": False, "best_similarity": 0.0, "match_id": None}
@@ -98,21 +145,28 @@ def insert_report(
     duplicate_of_id: str | None,
     municipal_service: str | None,
 ) -> str:
-    if not user_id:
-        raise ValueError("user_id requis")
-    uid = UUID(user_id)
+    """Insère un signalement. Compatible schéma unifié INT (NestJS + IA)."""
+    try:
+        uid = int(user_id) if user_id else None
+    except (ValueError, TypeError):
+        uid = None
     vec = "[" + ",".join(str(float(x)) for x in embedding) + "]"
-    dup = UUID(duplicate_of_id) if duplicate_of_id else None
+    dup = None
+    if duplicate_of_id:
+        try:
+            dup = int(duplicate_of_id)
+        except (ValueError, TypeError):
+            dup = None
     with get_connection() as conn:
         with conn.cursor() as cur:
             cur.execute(
                 """
                 INSERT INTO reports (
-                  user_id, content, category, status, sentiment_score,
+                  tenant_id, user_id, description, category, status, sentiment_score,
                   embedding, duplicate_of_id, municipal_service
                 ) VALUES (
-                  %s, %s, %s, %s::report_status, %s, %s::vector, %s, %s
-                ) RETURNING id::text
+                  'ia-pipeline', %s, %s, %s, %s, %s, %s::vector, %s, %s
+                ) RETURNING id
                 """,
                 (
                     uid,
@@ -135,16 +189,16 @@ def insert_report(
 def top_urgent_by_sentiment(
     days: int = 7, limit: int = 3
 ) -> list[dict[str, Any]]:
-    """Les signalements les plus « urgents » : sentiment le plus négatif (détresse, colère)."""
+    """Les signalements les plus urgents : sentiment le plus négatif."""
     with get_connection() as conn:
         with conn.cursor() as cur:
             cur.execute(
                 """
-                SELECT id::text, content, category, sentiment_score::float8,
-                       status::text, created_at, municipal_service
+                SELECT id, description, category, sentiment_score,
+                       status, created_at, municipal_service
                 FROM reports
                 WHERE created_at >= NOW() - (%s::int * INTERVAL '1 day')
-                  AND status::text = 'Open'
+                  AND status = 'Open'
                 ORDER BY sentiment_score ASC, created_at DESC
                 LIMIT %s
                 """,
@@ -175,9 +229,9 @@ def update_report_duplicate(
             cur.execute(
                 """
                 UPDATE reports
-                SET status = 'Duplicate'::report_status, duplicate_of_id = %s::uuid
-                WHERE id = %s::uuid
+                SET status = 'Duplicate', duplicate_of_id = %s
+                WHERE id = %s
                 """,
-                (original_id, report_id),
+                (int(original_id), int(report_id)),
             )
         conn.commit()
