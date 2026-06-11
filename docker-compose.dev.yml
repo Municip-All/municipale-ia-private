@@ -1,0 +1,45 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: municipall-ia-dev
+    ports:
+      - "${IA_PORT:-8000}:8000"
+    env_file:
+      - .env
+    environment:
+      # Ces variables sont lues depuis .env (ne sont PAS écrites en dur)
+      MISTRAL_API_KEY: ${MISTRAL_API_KEY}
+      MISTRAL_API_BASE: ${MISTRAL_API_BASE}
+      MISTRAL_MODEL: ${MISTRAL_MODEL}
+      MISTRAL_TIMEOUT_S: ${MISTRAL_TIMEOUT_S}
+      # Pour Mac/Windows : host.docker.internal permet d'accéder à l'hôte
+      # Sur Linux, utiliser : network_mode: host
+      DATABASE_HOST: ${DATABASE_HOST:-host.docker.internal}
+      DATABASE_PORT: ${DATABASE_PORT:-5432}
+      DATABASE_USER: ${DATABASE_USER:-mehmet}
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD}
+      DATABASE_NAME: ${DATABASE_NAME:-municipall}
+    volumes:
+      - .:/app
+      - /app/.venv
+    command: >
+      sh -c "pip install -r requirements.txt &&
+             python -m uvicorn api_fastapi:app --host 0.0.0.0 --port 8000 --reload"
+
+  # Optionnel : base de données PostgreSQL locale avec pgvector
+  # db:
+  #   image: ankane/pgvector:latest
+  #   container_name: municipall-db-dev
+  #   ports:
+  #     - "${DB_PORT:-5432}:5432"
+  #   environment:
+  #     POSTGRES_USER: ${DATABASE_USER:-postgres}
+  #     POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+  #     POSTGRES_DB: ${DATABASE_NAME:-municipall}
+  #   volumes:
+  #     - postgres_data:/var/lib/postgresql/data
+
+# volumes:
+#   postgres_data:
