@@ -12,9 +12,12 @@ import httpx
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
 
-from municipal.db import get_conninfo, top_urgent_by_sentiment
+from municipal.db import get_conninfo, top_urgent_by_sentiment, enrich_report
 from municipal.mistral_client import chat_completion, mistral_configured
 from municipal.pipeline import submit_report
+from municipal.analyzer import smart_analyzer
+from municipal.router import smart_route
+from municipal.duplicate import duplicate_finder
 
 router = APIRouter(prefix="/reporting", tags=["reporting"])
 
@@ -98,6 +101,22 @@ def _mairie_mistral(query: str, top_reports: list[dict[str, Any]]) -> str:
     )
 
 
+def _mairie_fallback(query: str, top_reports: list[dict[str, Any]]) -> str:
+    """Fallback quand Mistral est indisponible."""
+    if not top_reports:
+        return (
+            "Aucun signalement ouvert sur les 7 derniers jours ou base vide. "
+            "Vérifiez la période ou consultez le système complet."
+        )
+    lines = []
+    for i, r in enumerate(top_reports, 1):
+        lines.append(
+            f"{i}. [{r['category']}] score {r['sentiment_score']:.2f} — "
+            f"{(r['content'] or '')[:160]}{'…' if len(r.get('content') or '') > 160 else ''}"
+        )
+    return "Les 3 signalements ouverts les plus urgents (sentiment le plus négatif, 7 jours) :\n" + "\n".join(lines)
+
+
 def _wants_urgent_top3(q: str) -> bool:
     return bool(
         re.search(
@@ -105,6 +124,91 @@ def _wants_urgent_top3(q: str) -> bool:
             r"urgent|sentiment|cette semaine|semaine",
             (q or "").lower(),
         )
+    )
+
+
+class EnrichIn(BaseModel):
+    report_id: int = Field(..., description="ID du signalement (INT, backend NestJS)")
+    tenant_id: str = Field(..., description="Tenant ID (backend)")
+    user_id: int | None = Field(None, description="User ID numérique")
+    content: str = Field(..., description="Texte du signalement")
+    lat: float | None = Field(None)
+    lon: float | None = Field(None)
+
+
+class EnrichOut(BaseModel):
+    category: str
+    municipal_service: str
+    sentiment_score: float
+    is_spam: bool
+    duplicate_of_id: int | None = None
+    ai_confidence: float
+    ai_status: str
+
+
+@router.post("/enrich", response_model=EnrichOut)
+def enrich_existing(payload: EnrichIn) -> EnrichOut:
+    """
+    Pipeline IA d'enrichissement d'un signalement **déjà créé** par le backend.
+    Exécute : Smart-Analyzer → Smart-Router → Duplicate-Finder, puis UPDATE le report.
+    """
+    try:
+        get_conninfo()
+    except RuntimeError as e:
+        raise HTTPException(status_code=503, detail=str(e)) from e
+
+    a = smart_analyzer(payload.content, str(payload.user_id) if payload.user_id else None)
+    r = smart_route(payload.content)
+    dup_id: int | None = None
+    dup_snapshot: dict[str, Any] | None = None
+
+    if a.get("is_spam"):
+        ai_status = "Spam"
+        dup_snapshot = {"skipped": True, "reason": "spam_detecte"}
+    else:
+        d = duplicate_finder(
+            a["embedding"],
+            exclude_report_id=payload.report_id,
+            threshold=None,
+        )
+        dup_snapshot = {
+            key: d.get(key)
+            for key in (
+                "found", "is_duplicate", "match_id",
+                "match_status", "best_similarity", "message",
+            )
+            if key in d
+        }
+        if d.get("is_duplicate") and d.get("match_id"):
+            try:
+                dup_id = int(d["match_id"])
+                ai_status = "Duplicate"
+            except (ValueError, TypeError):
+                dup_id = None
+                ai_status = "Open"
+        else:
+            ai_status = "Open"
+
+    enrich_report(
+        report_id=payload.report_id,
+        tenant_id=payload.tenant_id,
+        content=payload.content,
+        category=r["category"],
+        municipal_service=r["municipal_service"],
+        sentiment_score=float(a["sentiment_score"]),
+        embedding=a["embedding"],
+        is_spam=bool(a["is_spam"]),
+        duplicate_of_id=dup_id,
+    )
+
+    return EnrichOut(
+        category=r["category"],
+        municipal_service=r["municipal_service"],
+        sentiment_score=float(a["sentiment_score"]),
+        is_spam=bool(a["is_spam"]),
+        duplicate_of_id=dup_id,
+        ai_confidence=float(r["confidence"]),
+        ai_status=ai_status,
     )
 
 
@@ -177,12 +281,9 @@ def chat_citoyen(payload: CitoyenChatIn) -> CitoyenChatOut:
     if mistral_configured():
         try:
             reply = _citoyen_mistral(r, payload.message)
-        except httpx.HTTPError as e:
-            raise HTTPException(
-                status_code=502, detail=f"Appel Mistral indisponible: {e!s}"
-            ) from e
-        except RuntimeError as e:
-            raise HTTPException(status_code=502, detail=str(e)) from e
+        except Exception:
+            # Fallback si Mistral retourne 401, 502, timeout, etc.
+            reply = _citoyen_template(r)
     else:
         reply = _citoyen_template(r)
     return CitoyenChatOut(
@@ -222,12 +323,9 @@ def chat_mairie(payload: MairieQueryIn) -> MairieQueryOut:
             top = top_urgent_by_sentiment(days=7, limit=3)
         try:
             answer = _mairie_mistral(q, top)
-        except httpx.HTTPError as e:
-            raise HTTPException(
-                status_code=502, detail=f"Appel Mistral indisponible: {e!s}"
-            ) from e
-        except RuntimeError as e:
-            raise HTTPException(status_code=502, detail=str(e)) from e
+        except Exception:
+            # Fallback si Mistral indisponible (401, 502, timeout, etc.)
+            answer = _mairie_fallback(q, top)
         return MairieQueryOut(answer=answer, top_reports=top)
     if not wants:
         return MairieQueryOut(
