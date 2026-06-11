@@ -1,39 +1,57 @@
--- Municip'All — schéma PostgreSQL + pgvector
--- Exécuter en superutilisateur sur une base vierge ou après création de la base :
---   createdb municipall
+-- Municip'All — schéma PostgreSQL unifié (NestJS backend + IA pipeline)
+-- Compatible avec TypeORM (reports.id = INT, tenant_id STRING)
+-- Exécuter en superutilisateur sur la base :
 --   psql -d municipall -f db/schema.sql
 
-CREATE EXTENSION IF NOT EXISTS pgcrypto;
+CREATE EXTENSION IF NOT EXISTS postgis;
 CREATE EXTENSION IF NOT EXISTS vector;
 
-CREATE TYPE report_status AS ENUM (
-  'Open',
-  'In_Progress',
-  'Resolved',
-  'Duplicate',
-  'Spam'
-);
+-- type ENUM non utilisé avec NestJS/TypeORM (status libre pour flexibilité)
+-- On garde le schéma ouvert pour permettre les valeurs 'En attente', 'En cours', 'Résolu', 'Doublon', 'Rejeté'
 
-CREATE TABLE reports (
-  id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id       UUID NOT NULL,
-  content       TEXT NOT NULL,
-  category      VARCHAR(128) NOT NULL,
-  status        report_status NOT NULL DEFAULT 'Open',
-  sentiment_score REAL NOT NULL CHECK (sentiment_score >= -1.0 AND sentiment_score <= 1.0),
-  embedding     vector(384) NOT NULL,
-  duplicate_of_id UUID REFERENCES reports (id) ON DELETE SET NULL,
+-- NOTE: les tables TypeORM hors reports sont gérées par TypeORM synchronize
+-- / DatabaseSchemaService.
+
+-- Reports : table MANUELEMENT alignée sur les deux projets
+CREATE TABLE IF NOT EXISTS reports (
+  id                SERIAL PRIMARY KEY,
+  tenant_id         VARCHAR(64) NOT NULL,
+  user_id           INTEGER,
+  category          VARCHAR(128) NOT NULL,
+  status            VARCHAR(64) NOT NULL DEFAULT 'En attente',
+  is_resident       BOOLEAN NOT NULL DEFAULT true,
+  image_url         TEXT,
+  description       TEXT,
+
+  -- champs IA / pipeline enrichissement (ajoutés par le flux backend → IA)
+  sentiment_score   REAL,
+  ai_confidence     REAL,
+  is_spam           BOOLEAN NOT NULL DEFAULT false,
+  duplicate_of_id   INTEGER,
   municipal_service VARCHAR(160),
-  created_at    TIMESTAMPTZ NOT NULL DEFAULT NOW()
+  ai_category       VARCHAR(128),
+  ai_processed      BOOLEAN NOT NULL DEFAULT false,
+
+  -- pgvector embedding (384-d via sentence-transformers)
+  embedding         vector(384),
+
+  -- PostGIS location (Point, WGS84)
+  location geometry(Point, 4326),
+
+  created_at        TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  updated_at        TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
-CREATE INDEX idx_reports_user_id ON reports (user_id);
-CREATE INDEX idx_reports_status ON reports (status);
-CREATE INDEX idx_reports_created_at ON reports (created_at);
-CREATE INDEX idx_reports_category ON reports (category);
-CREATE INDEX idx_reports_duplicate_of ON reports (duplicate_of_id);
+CREATE INDEX IF NOT EXISTS idx_reports_tenant_id ON reports (tenant_id);
+CREATE INDEX IF NOT EXISTS idx_reports_user_id ON reports (user_id);
+CREATE INDEX IF NOT EXISTS idx_reports_status ON reports (status);
+CREATE INDEX IF NOT EXISTS idx_reports_created_at ON reports (created_at);
+CREATE INDEX IF NOT EXISTS idx_reports_category ON reports (category);
+CREATE INDEX IF NOT EXISTS idx_reports_duplicate_of ON reports (duplicate_of_id);
+CREATE INDEX IF NOT EXISTS idx_reports_is_spam ON reports (is_spam);
+CREATE INDEX IF NOT EXISTS idx_reports_sentiment ON reports (sentiment_score);
 
--- Après peuplement : index HNSW ou IVFFlat sur embedding pour accélérer le Duplicate-Finder, ex. :
--- CREATE INDEX idx_reports_embedding_hnsw ON reports USING hnsw (embedding vector_cosine_ops);
+-- Après peuplement : index HNSW sur embedding pour le Duplicate-Finder
+-- CREATE INDEX IF NOT EXISTS idx_reports_embedding_hnsw ON reports USING hnsw (embedding vector_cosine_ops);
 
-COMMENT ON TABLE reports IS 'Signalements citoyens : embeddings 384D (ex. all-MiniLM-L6-v2) pour doublons sémantiques.';
+COMMENT ON TABLE reports IS 'Signalements citoyens unifiés (NestJS + IA). Embeddings 384D via sentence-transformers pour doublons sémantiques.';
