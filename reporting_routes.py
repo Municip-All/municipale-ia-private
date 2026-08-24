@@ -131,7 +131,7 @@ class EnrichIn(BaseModel):
     report_id: int = Field(..., description="ID du signalement (INT, backend NestJS)")
     tenant_id: str = Field(..., description="Tenant ID (backend)")
     user_id: int | None = Field(None, description="User ID numérique")
-    content: str = Field(..., description="Texte du signalement")
+    content: str = Field(..., description="Texte du signalement", max_length=5000)
     lat: float | None = Field(None)
     lon: float | None = Field(None)
 
@@ -214,7 +214,7 @@ def enrich_existing(payload: EnrichIn) -> EnrichOut:
 
 class SubmitIn(BaseModel):
     user_id: str = Field(..., description="UUID utilisateur")
-    content: str = Field(..., description="Texte du signalement")
+    content: str = Field(..., description="Texte du signalement", max_length=5000)
 
 
 class SubmitOut(BaseModel):
@@ -250,7 +250,7 @@ def api_submit(payload: SubmitIn) -> SubmitOut:
 
 class CitoyenChatIn(BaseModel):
     user_id: str
-    message: str
+    message: str = Field(..., max_length=5000)
 
 
 class CitoyenChatOut(BaseModel):
@@ -296,7 +296,7 @@ def chat_citoyen(payload: CitoyenChatIn) -> CitoyenChatOut:
 
 
 class MairieQueryIn(BaseModel):
-    query: str = Field(..., description="Question en langage naturel (démo)")
+    query: str = Field(..., description="Question en langage naturel (démo)", max_length=5000)
 
 
 class MairieQueryOut(BaseModel):
