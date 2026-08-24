@@ -10,10 +10,10 @@ services:
       - .env
     environment:
       # Ces variables sont lues depuis .env (ne sont PAS écrites en dur)
-      MISTRAL_API_KEY: ${MISTRAL_API_KEY}
-      MISTRAL_API_BASE: ${MISTRAL_API_BASE}
-      MISTRAL_MODEL: ${MISTRAL_MODEL}
-      MISTRAL_TIMEOUT_S: ${MISTRAL_TIMEOUT_S}
+      LITELLM_API_KEY: ${LITELLM_API_KEY}
+      LITELLM_MODEL: ${LITELLM_MODEL}
+      LITELLM_API_BASE: ${LITELLM_API_BASE}
+      LITELLM_TIMEOUT_S: ${LITELLM_TIMEOUT_S}
       # Pour Mac/Windows : host.docker.internal permet d'accéder à l'hôte
       # Sur Linux, utiliser : network_mode: host
       DATABASE_HOST: ${DATABASE_HOST:-host.docker.internal}
