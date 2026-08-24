@@ -41,7 +41,7 @@ python mcp_municipal.py
 
 Le serveur écoute sur **stdin/stdout** (transport MCP standard), sans port réseau.
 
-## Configuration dans Cursor (exemple `mcp.json`)
+## Configuration dans vs (exemple `mcp.json`)
 
 ```json
 {
@@ -77,7 +77,7 @@ Chaînage côté client recommandé pour un signalement :
 `smart-analyzer` → `smart-router` (si le texte n’est pas spam) → `duplicate-finder` (avec l’embedding retourné) → écriture SQL applicative.  
 L’API FastAPI **`POST /reporting/submit`** exécite déjà ce pipeline (`municipal/pipeline.py`).
 
-## Intégration LLM (Claude, GPT, etc.)
+## Intégration LLM 
 
 1. L’hôte branche le transport **stdio** vers `python mcp_municipal.py`.  
 2. L’hôte interroge `tools/list` (géré par le SDK) et mappe les noms ci-dessus.  
@@ -98,36 +98,36 @@ Avec l’API FastAPI (`uvicorn api_fastapi:app --reload`) :
 - `POST /reporting/chat/mairie` : démo « dashboard textuel » — si la requête évoque urgence / sentiment / « cette semaine », renvoie les 3 signalements **Open** les plus urgents (sentiment le plus négatif) sur 7 jours.  
 - `POST /reporting/submit` : enregistrement direct du pipeline complet.
 
-## LLM — Mistral (NumSpot) pour les chats API
+## LLM — LiteLLM (proxy universel) pour les chats API
 
-Les routes `POST /reporting/chat/citoyen` et `POST /reporting/chat/mairie` appellent l’API **chat completions** (format compatible OpenAI) si une clé est fournie. Les embarquements restent **locaux** ; seule la **réponse conversationnelle** transite par Mistral.
+Les routes `POST /reporting/chat/citoyen` et `POST /reporting/chat/mairie` appellent un LLM via **LiteLLM** si une clé est fournie. Les embeddings restent **locaux** ; seule la **réponse conversationnelle** transite par le LLM.
 
-Variables d’environnement (la clé n’est jamais à versionner) :
+Variables d'environnement (la clé n'est jamais à versionner, injectée via OpenCode) :
 
 | Variable | Exemple / défaut |
 |----------|------------------|
-| `MISTRAL_API_KEY` | *(à remplir)* |
-| `MISTRAL_API_BASE` | `https://api.mistral.numspot.com/v1` |
-| `MISTRAL_MODEL` | `mistral-medium-2508` |
-| `MISTRAL_TIMEOUT_S` | `120` |
+| `LITELLM_API_KEY` | *(injectée via OpenCode)* |
+| `LITELLM_MODEL` | `mistral/mistral-medium-2508` |
+| `LITELLM_API_BASE` | *(vide = défaut LiteLLM)* |
+| `LITELLM_TIMEOUT_S` | `120` |
 
-Sans `MISTRAL_API_KEY`, le bot **citoyen** utilise le texte prédéfini ; le bot **mairie** conserve l’ancienne démo par mots-clés.
+Sans `LITELLM_API_KEY`, le bot **citoyen** utilise le texte prédéfini ; le bot **mairie** conserve l'ancienne démo par mots-clés.
 
 ### Dépannage
 
-- **401 Unauthorized** : la passerelle refuse `Authorization: Bearer …`. Causes fréquentes : clé expirée ou révoquée, besoin d’un flux NumSpot (jeton IAM à obtenir séparément), ou mauvaise configuration côté console NumSpot.
+- **401 Unauthorized** : vérifier que la clé est valide et que le préfixe du modèle (`mistral/`, `openai/`, etc.) correspond au fournisseur configuré dans LiteLLM.
 
 ### Tests
 
 ```bash
 # Unités (sans réseau)
-pytest tests/test_mistral_client.py -m "not integration"
+pytest tests/test_llm_client.py -m "not integration"
 
-# Intégration (clé uniquement en variable d’environnement)
-MISTRAL_API_KEY="…" MISTRAL_API_BASE="https://api.mistral.numspot.com/v1" MISTRAL_MODEL="mistral-medium-2508" \
-  pytest tests/test_mistral_client.py -m integration
+# Intégration (clé uniquement en variable d'environnement)
+LITELLM_API_KEY="…" LITELLM_MODEL="mistral/mistral-medium-2508" \
+  pytest tests/test_llm_client.py -m integration
 ```
 
-Code : `municipal/mistral_client.py` et `municipal/config.py`.
+Code : `municipal/llm_client.py` et `municipal/config.py`.
 
 Document généré pour le lot Reporting / MCP — Municip’All.
