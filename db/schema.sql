@@ -51,7 +51,6 @@ CREATE INDEX IF NOT EXISTS idx_reports_duplicate_of ON reports (duplicate_of_id)
 CREATE INDEX IF NOT EXISTS idx_reports_is_spam ON reports (is_spam);
 CREATE INDEX IF NOT EXISTS idx_reports_sentiment ON reports (sentiment_score);
 
--- Après peuplement : index HNSW sur embedding pour le Duplicate-Finder
--- CREATE INDEX IF NOT EXISTS idx_reports_embedding_hnsw ON reports USING hnsw (embedding vector_cosine_ops);
+CREATE INDEX IF NOT EXISTS idx_reports_embedding_hnsw ON reports USING hnsw (embedding vector_cosine_ops);
 
 COMMENT ON TABLE reports IS 'Signalements citoyens unifiés (NestJS + IA). Embeddings 384D via sentence-transformers pour doublons sémantiques.';
