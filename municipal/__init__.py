@@ -1,1 +1,1 @@
-# Package municipal — reporting, embeddings, MCP tools (logique partagée).
+# Package municipal — reporting, embeddings, MCP tools, LLM client (logique partagée).
