@@ -215,6 +215,7 @@ def enrich_existing(payload: EnrichIn) -> EnrichOut:
 class SubmitIn(BaseModel):
     user_id: str = Field(..., description="UUID utilisateur")
     content: str = Field(..., description="Texte du signalement", max_length=5000)
+    tenant_id: str = Field("ia-pipeline", description="Tenant ID")
 
 
 class SubmitOut(BaseModel):
@@ -234,7 +235,7 @@ def api_submit(payload: SubmitIn) -> SubmitOut:
     except RuntimeError as e:
         raise HTTPException(status_code=503, detail=str(e)) from e
     try:
-        r = submit_report(payload.user_id, payload.content)
+        r = submit_report(payload.user_id, payload.content, tenant_id=payload.tenant_id)
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e)) from e
     return SubmitOut(
@@ -251,6 +252,7 @@ def api_submit(payload: SubmitIn) -> SubmitOut:
 class CitoyenChatIn(BaseModel):
     user_id: str
     message: str = Field(..., max_length=5000)
+    tenant_id: str = Field("ia-pipeline", description="Tenant ID")
 
 
 class CitoyenChatOut(BaseModel):
@@ -272,7 +274,7 @@ def chat_citoyen(payload: CitoyenChatIn) -> CitoyenChatOut:
     except RuntimeError as e:
         raise HTTPException(status_code=503, detail=str(e)) from e
     try:
-        r = submit_report(payload.user_id, payload.message)
+        r = submit_report(payload.user_id, payload.message, tenant_id=payload.tenant_id)
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e)) from e
     cat = r["category"]

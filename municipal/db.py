@@ -117,7 +117,7 @@ def find_nearest_report_by_embedding(
             row = cur.fetchone()
             if not row:
                 return {"found": False, "best_similarity": 0.0, "match_id": None}
-            match_id, status, sim = row[0], row[1], float(row[2])
+            match_id, status, sim = row[0], row[1], float(row[2]) if row[2] is not None else 0.0
             if sim > threshold:
                 return {
                     "found": True,
@@ -144,6 +144,7 @@ def insert_report(
     embedding: list[float],
     duplicate_of_id: str | None,
     municipal_service: str | None,
+    tenant_id: str = "ia-pipeline",
 ) -> str:
     """Insère un signalement. Compatible schéma unifié INT (NestJS + IA)."""
     try:
@@ -165,10 +166,11 @@ def insert_report(
                   tenant_id, user_id, description, category, status, sentiment_score,
                   embedding, duplicate_of_id, municipal_service
                 ) VALUES (
-                  'ia-pipeline', %s, %s, %s, %s, %s, %s::vector, %s, %s
+                  %s, %s, %s, %s, %s, %s, %s::vector, %s, %s
                 ) RETURNING id
                 """,
                 (
+                    tenant_id,
                     uid,
                     content,
                     category,
