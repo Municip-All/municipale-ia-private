@@ -3,10 +3,10 @@ FROM python:3.12-slim
 WORKDIR /app
 
 # Arguments de build pour les secrets (optionnels, pour CI/CD)
-ARG MISTRAL_API_KEY
-ARG MISTRAL_API_BASE
-ARG MISTRAL_MODEL
-ARG MISTRAL_TIMEOUT_S
+ARG LITELLM_API_KEY
+ARG LITELLM_API_BASE
+ARG LITELLM_MODEL
+ARG LITELLM_TIMEOUT_S
 
 # Installer les dépendances système nécessaires
 RUN apt-get update && apt-get install -y \

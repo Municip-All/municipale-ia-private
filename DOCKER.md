@@ -1,6 +1,6 @@
 # 🐳 Docker Development Setup
 
-## Configuration des secrets Mistral
+## Configuration des secrets LiteLLM
 
 ### 1. Créer ton fichier `.env` local
 
@@ -13,10 +13,10 @@ cp .env.example .env
 ### 2. Remplir les valeurs dans `.env`
 
 ```bash
-MISTRAL_API_KEY=HXjrM2J8aShhHwIhRv0xFFoNd957TONB
-MISTRAL_API_BASE=https://api.mistral.numspot.com/v1
-MISTRAL_MODEL=mistral-medium-2508
-MISTRAL_TIMEOUT_S=120
+LITELLM_API_KEY=<votre-clé-injectée-via-opencode>
+LITELLM_MODEL=mistral/mistral-medium-2508
+LITELLM_API_BASE=
+LITELLM_TIMEOUT_S=120
 ```
 
 ### 3. Lancer avec Docker Compose
@@ -57,10 +57,10 @@ Vérifié dans `.gitignore` :
 ### Utilisation en CI/CD (GitHub Actions)
 
 Les secrets sont injectés automatiquement via les `Actions secrets` :
-- `MISTRAL_API_KEY`
-- `MISTRAL_API_BASE`
-- `MISTRAL_MODEL`
-- `MISTRAL_TIMEOUT_S`
+- `LITELLM_API_KEY`
+- `LITELLM_MODEL`
+- `LITELLM_API_BASE`
+- `LITELLM_TIMEOUT_S`
 
 Voir `.github/workflows/docker-build.yml` pour le workflow complet.
 
@@ -74,7 +74,7 @@ Voir `.github/workflows/docker-build.yml` pour le workflow complet.
 ├── 🐳 Docker Container: municipall-ia-dev (port 8000)
 │   ├── FastAPI app
 │   ├── Bert embeddings
-│   └── Mistral client (via variables d'env)
+│   └── LiteLLM client (via variables d'env)
 │
 └── 🗄️ PostgreSQL (localhost:5432, hors Docker)
     └── pgvector extension
@@ -86,10 +86,10 @@ Voir `.github/workflows/docker-build.yml` pour le workflow complet.
 
 | Variable | Description | Obligatoire |
 |----------|-------------|-------------|
-| `MISTRAL_API_KEY` | Clé API Mistral NumSpot | ✅ |
-| `MISTRAL_API_BASE` | URL de base de l'API | ✅ |
-| `MISTRAL_MODEL` | Nom du modèle | ✅ |
-| `MISTRAL_TIMEOUT_S` | Timeout requêtes (s) | ✅ |
+| `LITELLM_API_KEY` | Clé API LLM (injectée via OpenCode) | ✅ |
+| `LITELLM_MODEL` | Nom du modèle (prefix LiteLLM) | ✅ |
+| `LITELLM_API_BASE` | URL de base de l'API (optionnel) | ❌ |
+| `LITELLM_TIMEOUT_S` | Timeout requêtes (s) | ✅ |
 | `DATABASE_HOST` | Hôte PostgreSQL | ✅ |
 | `DATABASE_PORT` | Port PostgreSQL | ✅ |
 | `DATABASE_USER` | Utilisateur PostgreSQL | ✅ |
