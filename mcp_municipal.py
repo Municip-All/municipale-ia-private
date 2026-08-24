@@ -33,7 +33,7 @@ def duplicate_finder_tool(
     B — Recherche du signalement le plus proche (similarité cosinus > seuil) dans PostgreSQL+pgvector.
     exclude_report_id : UUID du signalement courant à exclure (ex. déjà inséré) si besoin.
     """
-    ex = exclude_report_id.strip() or None
+    ex = int(exclude_report_id.strip()) if exclude_report_id.strip() else None
     return duplicate_finder_json(embedding, ex, threshold)
 
 
