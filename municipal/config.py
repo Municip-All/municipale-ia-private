@@ -28,10 +28,9 @@ def _build_database_url() -> str:
 
 DATABASE_URL = _build_database_url()
 
-# Mistral (NumSpot) — clé jamais committée ; définir MISTRAL_API_KEY dans l'environnement
-MISTRAL_API_BASE = os.environ.get(
-    "MISTRAL_API_BASE", "https://api.mistral.numspot.com/v1"
-).rstrip("/")
-MISTRAL_API_KEY = os.environ.get("MISTRAL_API_KEY", "").strip()
-MISTRAL_MODEL = os.environ.get("MISTRAL_MODEL", "mistral-medium-2508")
-MISTRAL_TIMEOUT_S = float(os.environ.get("MISTRAL_TIMEOUT_S", "120"))
+# LiteLLM — proxy universel (Mistral, OpenAI, Anthropic…)
+# Définir LITELLM_API_KEY dans l'environnement (injecté via OpenCode)
+LITELLM_MODEL = os.environ.get("LITELLM_MODEL", "mistral/mistral-medium-2508")
+LITELLM_API_KEY = os.environ.get("LITELLM_API_KEY", "").strip()
+LITELLM_API_BASE = os.environ.get("LITELLM_API_BASE", "").strip()
+LITELLM_TIMEOUT_S = float(os.environ.get("LITELLM_TIMEOUT_S", "120"))

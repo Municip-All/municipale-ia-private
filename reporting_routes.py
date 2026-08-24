@@ -13,7 +13,7 @@ from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
 
 from municipal.db import get_conninfo, top_urgent_by_sentiment, enrich_report
-from municipal.mistral_client import chat_completion, mistral_configured
+from municipal.llm_client import chat_completion, llm_configured
 from municipal.pipeline import submit_report
 from municipal.analyzer import smart_analyzer
 from municipal.router import smart_route
@@ -41,7 +41,7 @@ def _citoyen_template(r: dict[str, Any]) -> str:
     )
 
 
-def _citoyen_mistral(r: dict[str, Any], user_message: str) -> str:
+def _citoyen_llm(r: dict[str, Any], user_message: str) -> str:
     ctx = {
         "message_utilisateur": user_message,
         "traitement": {
@@ -74,7 +74,7 @@ def _citoyen_mistral(r: dict[str, Any], user_message: str) -> str:
     )
 
 
-def _mairie_mistral(query: str, top_reports: list[dict[str, Any]]) -> str:
+def _mairie_llm(query: str, top_reports: list[dict[str, Any]]) -> str:
     if top_reports:
         ctx = "Données (signalements Open, urgence liée au sentiment) :\n" + json.dumps(
             top_reports, ensure_ascii=False, default=str
@@ -102,7 +102,7 @@ def _mairie_mistral(query: str, top_reports: list[dict[str, Any]]) -> str:
 
 
 def _mairie_fallback(query: str, top_reports: list[dict[str, Any]]) -> str:
-    """Fallback quand Mistral est indisponible."""
+    """Fallback quand le LLM est indisponible."""
     if not top_reports:
         return (
             "Aucun signalement ouvert sur les 7 derniers jours ou base vide. "
@@ -265,7 +265,7 @@ class CitoyenChatOut(BaseModel):
 def chat_citoyen(payload: CitoyenChatIn) -> CitoyenChatOut:
     """
     Simule le bot citoyen : message rassurant + thématique (pipeline MCP) ;
-    texte généré par **Mistral** si MISTRAL_API_KEY est définie, sinon texte prédéfini.
+    texte généré par **LLM** si LITELLM_API_KEY est définie, sinon texte prédéfini.
     """
     try:
         get_conninfo()
@@ -278,11 +278,11 @@ def chat_citoyen(payload: CitoyenChatIn) -> CitoyenChatOut:
     cat = r["category"]
     svc = r["municipal_service"]
     sp = bool(r["is_spam"])
-    if mistral_configured():
+    if llm_configured():
         try:
-            reply = _citoyen_mistral(r, payload.message)
+            reply = _citoyen_llm(r, payload.message)
         except Exception:
-            # Fallback si Mistral retourne 401, 502, timeout, etc.
+            # Fallback si le LLM retourne 401, 502, timeout, etc.
             reply = _citoyen_template(r)
     else:
         reply = _citoyen_template(r)
@@ -307,7 +307,7 @@ class MairieQueryOut(BaseModel):
 @router.post("/chat/mairie", response_model=MairieQueryOut)
 def chat_mairie(payload: MairieQueryIn) -> MairieQueryOut:
     """
-    Dashboard textuel. Avec MISTRAL_API_KEY : réponse générée par Mistral (éventuels
+    Dashboard textuel. Avec LITELLM_API_KEY : réponse générée par LLM (éventuels
     3 signalements Open les plus sensibles sur 7 jours si la question l'évoque).
     Sans clé : même logique de démo qu'avant (requête mots-clés + liste structurée).
     """
@@ -317,14 +317,14 @@ def chat_mairie(payload: MairieQueryIn) -> MairieQueryOut:
         raise HTTPException(status_code=503, detail=str(e)) from e
     q = payload.query or ""
     wants = _wants_urgent_top3(q)
-    if mistral_configured():
+    if llm_configured():
         top: list[dict[str, Any]] = []
         if wants:
             top = top_urgent_by_sentiment(days=7, limit=3)
         try:
-            answer = _mairie_mistral(q, top)
+            answer = _mairie_llm(q, top)
         except Exception:
-            # Fallback si Mistral indisponible (401, 502, timeout, etc.)
+            # Fallback si LLM indisponible (401, 502, timeout, etc.)
             answer = _mairie_fallback(q, top)
         return MairieQueryOut(answer=answer, top_reports=top)
     if not wants:
