@@ -44,11 +44,10 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          # Les secrets Mistral sont injectés via les build-args
           build-args: |
-            MISTRAL_API_KEY=${{ secrets.MISTRAL_API_KEY }}
-            MISTRAL_API_BASE=${{ secrets.MISTRAL_API_BASE }}
-            MISTRAL_MODEL=${{ secrets.MISTRAL_MODEL }}
-            MISTRAL_TIMEOUT_S=${{ secrets.MISTRAL_TIMEOUT_S }}
+            LITELLM_API_KEY=${{ secrets.LITELLM_API_KEY }}
+            LITELLM_API_BASE=${{ secrets.LITELLM_API_BASE }}
+            LITELLM_MODEL=${{ secrets.LITELLM_MODEL }}
+            LITELLM_TIMEOUT_S=${{ secrets.LITELLM_TIMEOUT_S }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
