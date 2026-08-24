@@ -5,6 +5,7 @@
 #####
 
 
+import json
 import os
 from contextlib import asynccontextmanager
 from collections.abc import AsyncGenerator
@@ -35,7 +36,11 @@ async def lifespan(_app: FastAPI) -> AsyncGenerator[None, None]:
     predictor = Predictor() if _ml_artifacts_ready() else None
     if REDIS_AVAIL:
         try:
-            rds = redis.Redis(host="localhost", port=6379, decode_responses=True)
+            rds = redis.Redis(
+                host=os.environ.get("REDIS_HOST", "localhost"),
+                port=int(os.environ.get("REDIS_PORT", "6379")),
+                decode_responses=True,
+            )
             rds.ping()
         except Exception:
             rds = None
@@ -75,19 +80,17 @@ def predict(payload: PredictIn):
                 "(python main.py) pour générer artifacts/*.joblib."
             ),
         )
-    g = geo_bucket(payload.lat, payload.lon, 500)
+    g = geo_bucket(payload.lat, payload.lon)
     key = stable_hash(f"{payload.description}|{g}|{payload.hour}")
     if rds is not None:
         cached = rds.get(key)
         if cached:
-            import json
             c = json.loads(cached)
             return PredictOut(pred=c["pred"], proba=c["proba"], cache=True)
 
     out = predictor.predict(payload.description, g, payload.hour)
 
     if rds is not None:
-        import json
         rds.setex(key, 3600, json.dumps(out))
 
     return PredictOut(**out, cache=False)

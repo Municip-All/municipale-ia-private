@@ -18,7 +18,9 @@ RUN apt-get update && apt-get install -y \
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copier le code source
+ARG MUNICIPAL_EMBEDDING_MODEL=paraphrase-multilingual-MiniLM-L12-v2
+RUN python -c "from sentence_transformers import SentenceTransformer; SentenceTransformer('${MUNICIPAL_EMBEDDING_MODEL}')"
+
 COPY . .
 
 EXPOSE 8000
