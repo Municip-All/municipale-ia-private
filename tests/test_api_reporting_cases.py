@@ -46,7 +46,7 @@ class TestCitoyenChatMocked:
     ) -> None:
         with patch("reporting_routes.get_conninfo", return_value="postgresql://mock"):
             with patch("reporting_routes.submit_report", return_value=_report_open()):
-                with patch("reporting_routes.mistral_configured", return_value=False):
+                with patch("reporting_routes.llm_configured", return_value=False):
                     r = reporting_client.post(
                         "/reporting/chat/citoyen",
                         json={
@@ -60,7 +60,7 @@ class TestCitoyenChatMocked:
     def test_chat_spam_tone(self, reporting_client: TestClient) -> None:
         with patch("reporting_routes.get_conninfo", return_value="postgresql://mock"):
             with patch("reporting_routes.submit_report", return_value=_report_spam()):
-                with patch("reporting_routes.mistral_configured", return_value=False):
+                with patch("reporting_routes.llm_configured", return_value=False):
                     r = reporting_client.post(
                         "/reporting/chat/citoyen",
                         json={
@@ -76,7 +76,7 @@ class TestCitoyenChatMocked:
 class TestMairieChatMocked:
     def test_mairie_keyword_fallback_without_mistral(self, reporting_client: TestClient) -> None:
         with patch("reporting_routes.get_conninfo", return_value="postgresql://mock"):
-            with patch("reporting_routes.mistral_configured", return_value=False):
+            with patch("reporting_routes.llm_configured", return_value=False):
                 r = reporting_client.post(
                     "/reporting/chat/mairie",
                     json={"query": "bonjour"},
@@ -98,7 +98,7 @@ class TestMairieChatMocked:
         ]
         with patch("reporting_routes.get_conninfo", return_value="postgresql://mock"):
             with patch("reporting_routes.top_urgent_by_sentiment", return_value=rows):
-                with patch("reporting_routes.mistral_configured", return_value=False):
+                with patch("reporting_routes.llm_configured", return_value=False):
                     r = reporting_client.post(
                         "/reporting/chat/mairie",
                         json={"query": "Quels sont les 3 problèmes les plus urgents cette semaine ?"},
@@ -111,7 +111,7 @@ class TestMairieChatMocked:
     def test_mairie_with_mistral_mocked(self, reporting_client: TestClient) -> None:
         with patch("reporting_routes.get_conninfo", return_value="postgresql://mock"):
             with patch("reporting_routes.top_urgent_by_sentiment", return_value=[]):
-                with patch("reporting_routes.mistral_configured", return_value=True):
+                with patch("reporting_routes.llm_configured", return_value=True):
                     with patch("reporting_routes.chat_completion", return_value="Réponse synthétique."):
                         r = reporting_client.post(
                             "/reporting/chat/mairie",
