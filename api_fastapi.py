@@ -1,10 +1,11 @@
+import hmac
 import json
-import logging
 import os
 from contextlib import asynccontextmanager
 from collections.abc import AsyncGenerator
 from typing import Any
 
+import structlog
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
@@ -16,7 +17,7 @@ from utils import geo_bucket, stable_hash
 from model_inference import ENC_PATH, MODEL_PATH, Predictor, TFIDF_PATH
 from reporting_routes import router as reporting_router
 
-logger = logging.getLogger("municipall.api")
+log = structlog.get_logger("municipall.api")
 
 
 def _ml_artifacts_ready() -> bool:
@@ -69,9 +70,9 @@ _IS_PROD = os.environ.get("NODE_ENV", "").strip() == "production"
 
 if not _API_KEY:
     if _IS_PROD:
-        logger.error("FATAL: API_KEY not set in production — protected endpoints will reject all requests")
+        log.error("api_key_missing_prod")
     else:
-        logger.warning("WARNING: API_KEY not set, all endpoints are open")
+        log.warning("api_key_missing_dev")
 
 
 @app.middleware("http")
@@ -80,7 +81,7 @@ async def api_key_middleware(request: Request, call_next):
     is_protected = (path.startswith("/reporting") or path.startswith("/predict")) and not path.startswith("/health")
     if is_protected:
         if _API_KEY:
-            if request.headers.get("X-API-Key") != _API_KEY:
+            if not hmac.compare_digest(request.headers.get("X-API-Key", ""), _API_KEY):
                 from fastapi.responses import JSONResponse
                 return JSONResponse(status_code=401, content={"detail": "X-API-Key manquant ou invalide"})
         elif _IS_PROD:
