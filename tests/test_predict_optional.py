@@ -5,6 +5,7 @@ from __future__ import annotations
 from pathlib import Path
 
 import pytest
+from unittest.mock import MagicMock
 from fastapi.testclient import TestClient
 
 from api_fastapi import app
@@ -20,7 +21,11 @@ def _artifacts_ready() -> bool:
 
 @pytest.mark.skipif(not _artifacts_ready(), reason="Artefacts ML absents (lancer train_model.py)")
 def test_predict_health_and_classification() -> None:
-    with TestClient(app) as client:
+    import api_fastapi
+    api_fastapi._API_KEY = ""
+    api_fastapi._IS_PROD = False
+    api_fastapi.app.state.limiter = MagicMock()
+    with TestClient(api_fastapi.app) as client:
         h = client.get("/health")
         assert h.status_code == 200
         assert h.json().get("model_loaded") is True
