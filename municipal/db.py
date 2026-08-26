@@ -4,7 +4,7 @@ import os
 from contextlib import contextmanager
 from typing import Any, Generator, Optional
 
-from municipal.config import DATABASE_URL
+from municipal.config import get_database_url
 
 _conninfo: str | None = None
 
@@ -13,7 +13,7 @@ def get_conninfo() -> str:
     global _conninfo
     if _conninfo is not None:
         return _conninfo
-    url = DATABASE_URL or os.environ.get("DATABASE_URL", "")
+    url = get_database_url() or os.environ.get("DATABASE_URL", "")
     if not url:
         raise RuntimeError(
             "DATABASE_URL n'est pas définie. Exemple : "
@@ -221,19 +221,3 @@ def top_urgent_by_sentiment(
             }
         )
     return out
-
-
-def update_report_duplicate(
-    report_id: str, original_id: str
-) -> None:
-    with get_connection() as conn:
-        with conn.cursor() as cur:
-            cur.execute(
-                """
-                UPDATE reports
-                SET status = 'Duplicate', duplicate_of_id = %s
-                WHERE id = %s
-                """,
-                (int(original_id), int(report_id)),
-            )
-        conn.commit()
