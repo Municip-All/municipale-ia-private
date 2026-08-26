@@ -13,14 +13,13 @@ from collections.abc import AsyncGenerator
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from slowapi import Limiter, _rate_limit_exceeded_handler
-from slowapi.util import get_remote_address
+from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
+from municipal.rate_limit import limiter
+
 from utils import geo_bucket, stable_hash
 from model_inference import ENC_PATH, MODEL_PATH, Predictor, TFIDF_PATH
 from reporting_routes import router as reporting_router
-
-limiter = Limiter(key_func=get_remote_address, default_limits=["30/minute"])
 
 
 def _ml_artifacts_ready() -> bool:
@@ -50,6 +49,8 @@ async def lifespan(_app: FastAPI) -> AsyncGenerator[None, None]:
         except Exception:
             rds = None
     yield
+    if rds:
+        rds.close()
 
 app = FastAPI(title="Municip'All IA API", version="0.1.0", lifespan=lifespan)
 app.state.limiter = limiter
@@ -59,7 +60,7 @@ cors_origins = os.environ.get("CORS_ORIGINS", "http://localhost:3002,http://loca
 app.add_middleware(
     CORSMiddleware,
     allow_origins=cors_origins,
-    allow_credentials=cors_origins != ["*"],
+    allow_credentials="*" not in cors_origins,
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -67,19 +68,28 @@ app.add_middleware(
 app.include_router(reporting_router)
 
 _API_KEY = os.environ.get("API_KEY", "").strip()
+_IS_PROD = os.environ.get("NODE_ENV", "").strip() == "production"
 
 if not _API_KEY:
     import logging
-    logging.getLogger("uvicorn.error").warning("WARNING: API_KEY not set, all endpoints are open")
+    if _IS_PROD:
+        logging.getLogger("uvicorn.error").error("FATAL: API_KEY not set in production — protected endpoints will reject all requests")
+    else:
+        logging.getLogger("uvicorn.error").warning("WARNING: API_KEY not set, all endpoints are open")
 
 
 @app.middleware("http")
 async def api_key_middleware(request: Request, call_next):
     path = request.url.path
-    if _API_KEY and (path.startswith("/reporting") or path.startswith("/predict")) and not path.startswith("/health"):
-        if request.headers.get("X-API-Key") != _API_KEY:
+    is_protected = (path.startswith("/reporting") or path.startswith("/predict")) and not path.startswith("/health")
+    if is_protected:
+        if _API_KEY:
+            if request.headers.get("X-API-Key") != _API_KEY:
+                from fastapi.responses import JSONResponse
+                return JSONResponse(status_code=401, content={"detail": "X-API-Key manquant ou invalide"})
+        elif _IS_PROD:
             from fastapi.responses import JSONResponse
-            return JSONResponse(status_code=401, content={"detail": "X-API-Key manquant ou invalide"})
+            return JSONResponse(status_code=401, content={"detail": "API_KEY not configured"})
     return await call_next(request)
 
 class PredictIn(BaseModel):

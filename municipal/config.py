@@ -31,15 +31,13 @@ def _build_database_url() -> str:
         )
     return f"postgresql://{user}:{password}@{host}:{port}/{db}"
 
-_database_url = None  # type: str | None
+_database_url = None
 
 def get_database_url() -> str:
     global _database_url
     if _database_url is None:
         _database_url = _build_database_url()
     return _database_url
-
-DATABASE_URL = get_database_url()
 
 # LiteLLM — proxy universel (Mistral, OpenAI, Anthropic…)
 # Définir LITELLM_API_KEY dans l'environnement (injecté via OpenCode)

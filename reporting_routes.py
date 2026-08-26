@@ -8,7 +8,6 @@ import json
 import re
 from typing import Any, Optional
 
-import httpx
 from fastapi import APIRouter, HTTPException, Request
 from pydantic import BaseModel, Field
 
@@ -18,6 +17,7 @@ from municipal.pipeline import submit_report
 from municipal.analyzer import smart_analyzer
 from municipal.router import smart_route
 from municipal.duplicate import duplicate_finder
+from municipal.rate_limit import limiter
 
 router = APIRouter(prefix="/reporting", tags=["reporting"])
 
@@ -260,6 +260,7 @@ class CitoyenChatOut(BaseModel):
 
 
 @router.post("/chat/citoyen", response_model=CitoyenChatOut)
+@limiter.limit("10/minute")
 def chat_citoyen(request: Request, payload: CitoyenChatIn) -> CitoyenChatOut:
     """
     Simule le bot citoyen : message rassurant + thématique (pipeline MCP) ;
@@ -303,6 +304,7 @@ class MairieQueryOut(BaseModel):
 
 
 @router.post("/chat/mairie", response_model=MairieQueryOut)
+@limiter.limit("10/minute")
 def chat_mairie(request: Request, payload: MairieQueryIn) -> MairieQueryOut:
     """
     Dashboard textuel. Avec LITELLM_API_KEY : réponse générée par LLM (éventuels
