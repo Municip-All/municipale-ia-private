@@ -1,10 +1,6 @@
-######
-#   ALKAYA MEHMET
-#   EPITECH 2025
-#   PROJET EDP
-#####
-
 from pathlib import Path
+
+import structlog
 import pandas as pd
 import numpy as np
 import joblib, json
@@ -13,6 +9,8 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, f1_score, classification_report
 from sklearn.preprocessing import OneHotEncoder
 from scipy.sparse import hstack, csr_matrix
+
+log = structlog.get_logger("municipall.training")
 
 ART = Path("artifacts")
 DATA_CSV = ART / "preprocessed.csv"
@@ -59,10 +57,7 @@ def main():
     with open(METRICS_PATH, "w", encoding="utf-8") as f:
         json.dump(metrics, f, indent=2, ensure_ascii=False)
 
-    print("✅ Training done.")
-    print(f"- Accuracy: {acc:.4f} | F1-macro: {f1m:.4f}")
-    print(f"- Model saved to {MODEL_PATH}")
-    print(f"- Metrics saved to {METRICS_PATH}")
+    log.info("training_done", accuracy=f"{acc:.4f}", f1_macro=f"{f1m:.4f}", model_path=str(MODEL_PATH))
 
 if __name__ == "__main__":
     main()

@@ -9,7 +9,7 @@ joblib
 redis
 litellm
 slowapi
-# MCP + Reporting (Python 3.10+ requis pour le package mcp)
+structlog
 mcp[cli]>=1.0
 psycopg[binary]>=3.0
 sentence-transformers>=3.0

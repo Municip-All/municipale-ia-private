@@ -1,8 +1,3 @@
-"""
-Client LLM universel via LiteLLM — proxy agnostique (Mistral, OpenAI, Anthropic…).
-Définir LITELLM_API_KEY ; ne jamais logger la clé.
-"""
-
 from __future__ import annotations
 
 from typing import Optional

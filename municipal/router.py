@@ -12,7 +12,6 @@ from municipal.embeddings import embed_texts
 _lock = threading.Lock()
 _cached: tuple[np.ndarray, list[dict[str, str]]] | None = None
 
-# Règles + ancres sémantiques (FR) vers catégorie + service
 ANCHORS: list[dict[str, str]] = [
     {
         "category": "Voirie",
@@ -68,7 +67,6 @@ def _get_anchor_matrix() -> tuple[np.ndarray, list[dict[str, str]]]:
 
 
 def smart_route(text: str) -> dict[str, Any]:
-    """Smart-Router : plus proche voisin sur ancres sémantiques (embeddings locaux)."""
     t = (text or "").strip()
     if not t:
         return {

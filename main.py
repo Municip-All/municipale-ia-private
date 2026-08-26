@@ -1,9 +1,3 @@
-######
-#   ALKAYA MEHMET
-#   EPITECH 2025
-#   PROJET EDP
-#####
-
 from __future__ import annotations
 
 import argparse
@@ -11,10 +5,14 @@ import json
 import shutil
 from pathlib import Path
 
+import structlog
+
 from data_preprocessing import main as preprocessing_main
 from model_inference import Predictor
 from train_model import main as training_main
 from utils import geo_bucket
+
+log = structlog.get_logger("municipall.main")
 
 ART = Path("artifacts")
 DATA_CSV = ART / "preprocessed.csv"
@@ -26,18 +24,18 @@ METRICS_PATH = ART / "metrics.json"
 
 def ensure_preprocessing(force: bool) -> None:
     if force or not DATA_CSV.exists() or not TFIDF_PATH.exists():
-        print("🧹 Lancement du prétraitement des données...")
+        log.info("preprocessing_start")
         preprocessing_main()
     else:
-        print("🧹 Prétraitement déjà disponible, passage à l'étape suivante.")
+        log.info("preprocessing_skipped")
 
 
 def ensure_training(force: bool) -> None:
     if force or not MODEL_PATH.exists() or not ENC_PATH.exists():
-        print("🧠 Lancement de l'entraînement du modèle...")
+        log.info("training_start")
         training_main()
     else:
-        print("🧠 Modèle déjà entraîné, passage à l'étape suivante.")
+        log.info("training_skipped")
 
 
 def run_demo_inference(description: str, lat: float, lon: float, hour: int) -> dict:
@@ -51,9 +49,9 @@ def run_demo_inference(description: str, lat: float, lon: float, hour: int) -> d
 def clean_artifacts() -> None:
     if ART.exists():
         shutil.rmtree(ART)
-        print("🧽 Dossier artifacts supprimé.")
+        log.info("artifacts_cleaned")
     else:
-        print("🧽 Aucun artifact à supprimer.")
+        log.info("artifacts_empty")
 
 
 def main() -> None:
@@ -110,10 +108,10 @@ def main() -> None:
     ensure_training(force=args.force)
 
     if args.skip_demo:
-        print("🚀 Pipeline terminé (prétraitement + entraînement).")
+        log.info("pipeline_done_skip_demo")
         return
 
-    print("🔮 Inférence de démonstration en cours...")
+    log.info("demo_inference_start")
     demo = run_demo_inference(
         description=args.description, lat=args.lat, lon=args.lon, hour=args.hour
     )
@@ -123,16 +121,15 @@ def main() -> None:
         with open(METRICS_PATH, "r", encoding="utf-8") as f:
             metrics = json.load(f)
 
-    print("✅ Pipeline complet exécuté.")
-    print(f"- Prédiction demo : {demo['pred']} (p={demo['proba']:.3f})")
-    print(f"- Geo bucket utilisé : {demo['geo_bucket']}")
-    if metrics:
-        print(
-            f"- Dernières métriques -> Accuracy: {metrics.get('accuracy', 'NA')}, "
-            f"F1-macro: {metrics.get('f1_macro', 'NA')}"
-        )
+    log.info(
+        "pipeline_done",
+        pred=demo["pred"],
+        proba=f"{demo['proba']:.3f}",
+        geo_bucket=demo["geo_bucket"],
+        accuracy=metrics.get("accuracy"),
+        f1_macro=metrics.get("f1_macro"),
+    )
 
 
 if __name__ == "__main__":
     main()
-

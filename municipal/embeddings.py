@@ -8,7 +8,7 @@ import numpy as np
 from municipal.config import EMBEDDING_MODEL
 
 _lock = threading.Lock()
-_model = None  # type: ignore
+_model = None
 
 
 def get_model():

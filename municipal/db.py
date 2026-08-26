@@ -42,11 +42,6 @@ def enrich_report(
     is_spam: bool,
     duplicate_of_id: int | None,
 ) -> None:
-    """
-    Enrichit un signalement existant créé par le backend NestJS avec les résultats IA.
-    Met à jour : category, ai_category, municipal_service, sentiment_score, embedding,
-                  is_spam, duplicate_of_id, ai_processed.
-    """
     vec = "[" + ",".join(str(float(x)) for x in embedding) + "]"
     with get_connection() as conn:
         with conn.cursor() as cur:
@@ -84,10 +79,6 @@ def find_nearest_report_by_embedding(
     exclude_id: int | None,
     threshold: float,
 ) -> dict[str, Any]:
-    """
-    Cosinus (pgvector) : similarité = 1 - distance_cosinus, avec vecteurs normalisés.
-    Filtre les signalements non-spam / non-duplicate, exclut le report portant exclude_id.
-    """
     if not embedding:
         return {"found": False, "message": "embedding_vide"}
     vec_literal = "[" + ",".join(str(float(x)) for x in embedding) + "]"
@@ -146,7 +137,6 @@ def insert_report(
     municipal_service: str | None,
     tenant_id: str = "ia-pipeline",
 ) -> str:
-    """Insère un signalement. Compatible schéma unifié INT (NestJS + IA)."""
     try:
         uid = int(user_id) if user_id else None
     except (ValueError, TypeError):
@@ -191,7 +181,6 @@ def insert_report(
 def top_urgent_by_sentiment(
     days: int = 7, limit: int = 3
 ) -> list[dict[str, Any]]:
-    """Les signalements les plus urgents : sentiment le plus négatif."""
     with get_connection() as conn:
         with conn.cursor() as cur:
             cur.execute(

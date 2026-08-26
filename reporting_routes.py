@@ -1,7 +1,3 @@
-######
-#   Reporting + simulation des chatbots Citoyen / Mairie (FastAPI)
-#####
-
 from __future__ import annotations
 
 import json
@@ -102,7 +98,6 @@ def _mairie_llm(query: str, top_reports: list[dict[str, Any]]) -> str:
 
 
 def _mairie_fallback(query: str, top_reports: list[dict[str, Any]]) -> str:
-    """Fallback quand le LLM est indisponible."""
     if not top_reports:
         return (
             "Aucun signalement ouvert sur les 7 derniers jours ou base vide. "
@@ -147,11 +142,8 @@ class EnrichOut(BaseModel):
 
 
 @router.post("/enrich", response_model=EnrichOut)
+@limiter.limit("30/minute")
 def enrich_existing(request: Request, payload: EnrichIn) -> EnrichOut:
-    """
-    Pipeline IA d'enrichissement d'un signalement **déjà créé** par le backend.
-    Exécute : Smart-Analyzer → Smart-Router → Duplicate-Finder, puis UPDATE le report.
-    """
     try:
         get_conninfo()
     except RuntimeError as e:
@@ -225,6 +217,7 @@ class SubmitOut(BaseModel):
 
 
 @router.post("/submit", response_model=SubmitOut)
+@limiter.limit("30/minute")
 def api_submit(request: Request, payload: SubmitIn) -> SubmitOut:
     try:
         get_conninfo()
@@ -262,10 +255,6 @@ class CitoyenChatOut(BaseModel):
 @router.post("/chat/citoyen", response_model=CitoyenChatOut)
 @limiter.limit("10/minute")
 def chat_citoyen(request: Request, payload: CitoyenChatIn) -> CitoyenChatOut:
-    """
-    Simule le bot citoyen : message rassurant + thématique (pipeline MCP) ;
-    texte généré par **LLM** si LITELLM_API_KEY est définie, sinon texte prédéfini.
-    """
     try:
         get_conninfo()
     except RuntimeError as e:
@@ -281,7 +270,6 @@ def chat_citoyen(request: Request, payload: CitoyenChatIn) -> CitoyenChatOut:
         try:
             reply = _citoyen_llm(r, payload.message)
         except Exception:
-            # Fallback si le LLM retourne 401, 502, timeout, etc.
             reply = _citoyen_template(r)
     else:
         reply = _citoyen_template(r)
@@ -306,11 +294,6 @@ class MairieQueryOut(BaseModel):
 @router.post("/chat/mairie", response_model=MairieQueryOut)
 @limiter.limit("10/minute")
 def chat_mairie(request: Request, payload: MairieQueryIn) -> MairieQueryOut:
-    """
-    Dashboard textuel. Avec LITELLM_API_KEY : réponse générée par LLM (éventuels
-    3 signalements Open les plus sensibles sur 7 jours si la question l'évoque).
-    Sans clé : même logique de démo qu'avant (requête mots-clés + liste structurée).
-    """
     try:
         get_conninfo()
     except RuntimeError as e:
@@ -324,7 +307,6 @@ def chat_mairie(request: Request, payload: MairieQueryIn) -> MairieQueryOut:
         try:
             answer = _mairie_llm(q, top)
         except Exception:
-            # Fallback si LLM indisponible (401, 502, timeout, etc.)
             answer = _mairie_fallback(q, top)
         return MairieQueryOut(answer=answer, top_reports=top)
     if not wants:

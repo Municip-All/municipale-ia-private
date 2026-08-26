@@ -8,9 +8,6 @@ from municipal.spam_sentiment import analyze_spam_sentiment_urgency
 
 
 def smart_analyzer(content: str, user_id: str | None = None) -> dict[str, Any]:
-    """
-    Smart-Analyzer : spam, sentiment/urgence/ton, embedding (local sentence-transformers).
-    """
     meta = analyze_spam_sentiment_urgency(content)
     emb = embed_one(content)
     out: dict[str, Any] = {

@@ -37,7 +37,6 @@ MIN_CONTENT_LEN = 3
 
 
 def _looks_like_gibberish_or_noise(t: str) -> bool:
-    """Bruit : faux mots-clavier, faible densité alphabétique, suites de consonnes."""
     if len(t) < 18:
         return False
     letters = sum(1 for c in t if c.isalpha())
@@ -85,7 +84,6 @@ def analyze_spam_sentiment_urgency(text: str) -> dict[str, Any]:
     if _looks_like_gibberish_or_noise(t):
         out["is_spam"] = True
         out["spam_reasons"].append("contenu_bruit_ou_faux_texte")
-    # Score heuristique dans [-1, 1] (le LLM via MCP pourrait affiner côté client)
     score = 0.0
     if _FR_NEGATIVE.search(t):
         score -= 0.45

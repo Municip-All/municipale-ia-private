@@ -1,18 +1,13 @@
-######
-#   ALKAYA MEHMET
-#   EPITECH 2025
-#   PROJET EDP
-#####
-
-
 import json
+import logging
 import os
 from contextlib import asynccontextmanager
 from collections.abc import AsyncGenerator
+from typing import Any
 
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 from municipal.rate_limit import limiter
@@ -20,6 +15,8 @@ from municipal.rate_limit import limiter
 from utils import geo_bucket, stable_hash
 from model_inference import ENC_PATH, MODEL_PATH, Predictor, TFIDF_PATH
 from reporting_routes import router as reporting_router
+
+logger = logging.getLogger("municipall.api")
 
 
 def _ml_artifacts_ready() -> bool:
@@ -71,11 +68,10 @@ _API_KEY = os.environ.get("API_KEY", "").strip()
 _IS_PROD = os.environ.get("NODE_ENV", "").strip() == "production"
 
 if not _API_KEY:
-    import logging
     if _IS_PROD:
-        logging.getLogger("uvicorn.error").error("FATAL: API_KEY not set in production — protected endpoints will reject all requests")
+        logger.error("FATAL: API_KEY not set in production — protected endpoints will reject all requests")
     else:
-        logging.getLogger("uvicorn.error").warning("WARNING: API_KEY not set, all endpoints are open")
+        logger.warning("WARNING: API_KEY not set, all endpoints are open")
 
 
 @app.middleware("http")
@@ -93,7 +89,7 @@ async def api_key_middleware(request: Request, call_next):
     return await call_next(request)
 
 class PredictIn(BaseModel):
-    description: str
+    description: str = Field(..., max_length=5000)
     lat: float
     lon: float
     hour: int = 12
@@ -104,6 +100,7 @@ class PredictOut(BaseModel):
     cache: bool = False
 
 @app.post("/predict", response_model=PredictOut)
+@limiter.limit("30/minute")
 def predict(request: Request, payload: PredictIn):
     if predictor is None:
         raise HTTPException(
@@ -130,4 +127,26 @@ def predict(request: Request, payload: PredictIn):
 
 @app.get("/health")
 def health(request: Request):
-    return {"status": "ok", "model_loaded": predictor is not None}
+    checks: dict[str, Any] = {
+        "status": "ok",
+        "model_loaded": predictor is not None,
+        "redis": "unknown",
+        "database": "unknown",
+    }
+    if rds is not None:
+        try:
+            rds.ping()
+            checks["redis"] = "ok"
+        except Exception:
+            checks["redis"] = "error"
+            checks["status"] = "degraded"
+    else:
+        checks["redis"] = "not_configured"
+    try:
+        from municipal.db import get_conninfo
+        get_conninfo()
+        checks["database"] = "ok"
+    except Exception:
+        checks["database"] = "error"
+        checks["status"] = "degraded"
+    return checks
