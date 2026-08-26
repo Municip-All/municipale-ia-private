@@ -55,11 +55,11 @@ app = FastAPI(title="Municip'All IA API", version="0.1.0", lifespan=lifespan)
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
-cors_origins = os.environ.get("CORS_ORIGINS", "*").split(",")
+cors_origins = os.environ.get("CORS_ORIGINS", "http://localhost:3002,http://localhost:3000").split(",")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=cors_origins,
-    allow_credentials=True,
+    allow_credentials=cors_origins != ["*"],
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -68,10 +68,15 @@ app.include_router(reporting_router)
 
 _API_KEY = os.environ.get("API_KEY", "").strip()
 
+if not _API_KEY:
+    import logging
+    logging.getLogger("uvicorn.error").warning("WARNING: API_KEY not set, all endpoints are open")
+
 
 @app.middleware("http")
 async def api_key_middleware(request: Request, call_next):
-    if _API_KEY and request.url.path.startswith("/reporting"):
+    path = request.url.path
+    if _API_KEY and (path.startswith("/reporting") or path.startswith("/predict")) and not path.startswith("/health"):
         if request.headers.get("X-API-Key") != _API_KEY:
             from fastapi.responses import JSONResponse
             return JSONResponse(status_code=401, content={"detail": "X-API-Key manquant ou invalide"})
