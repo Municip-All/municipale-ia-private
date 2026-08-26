@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import logging
 import re
 from typing import Any, Optional
 
@@ -14,6 +15,8 @@ from municipal.analyzer import smart_analyzer
 from municipal.router import smart_route
 from municipal.duplicate import duplicate_finder
 from municipal.rate_limit import limiter
+
+logger = logging.getLogger("municipall.reporting")
 
 router = APIRouter(prefix="/reporting", tags=["reporting"])
 
@@ -270,6 +273,7 @@ def chat_citoyen(request: Request, payload: CitoyenChatIn) -> CitoyenChatOut:
         try:
             reply = _citoyen_llm(r, payload.message)
         except Exception:
+            logger.warning("citoyen LLM fallback to template")
             reply = _citoyen_template(r)
     else:
         reply = _citoyen_template(r)
@@ -307,6 +311,7 @@ def chat_mairie(request: Request, payload: MairieQueryIn) -> MairieQueryOut:
         try:
             answer = _mairie_llm(q, top)
         except Exception:
+            logger.warning("mairie LLM fallback to static summary")
             answer = _mairie_fallback(q, top)
         return MairieQueryOut(answer=answer, top_reports=top)
     if not wants:
