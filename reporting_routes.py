@@ -127,7 +127,7 @@ def _wants_urgent_top3(q: str) -> bool:
 
 class EnrichIn(BaseModel):
     report_id: int = Field(..., description="ID du signalement (INT, backend NestJS)")
-    tenant_id: str = Field(..., description="Tenant ID (backend)")
+    tenant_id: str = Field(..., description="Tenant ID (backend)", max_length=128)
     user_id: int | None = Field(None, description="User ID numérique")
     content: str = Field(..., description="Texte du signalement", max_length=5000)
     lat: float | None = Field(None)
@@ -204,9 +204,9 @@ def enrich_existing(request: Request, payload: EnrichIn) -> EnrichOut:
 
 
 class SubmitIn(BaseModel):
-    user_id: str = Field(..., description="UUID utilisateur")
+    user_id: str = Field(..., description="UUID utilisateur", max_length=128)
     content: str = Field(..., description="Texte du signalement", max_length=5000)
-    tenant_id: str = Field("ia-pipeline", description="Tenant ID")
+    tenant_id: str = Field("ia-pipeline", description="Tenant ID", max_length=128)
 
 
 class SubmitOut(BaseModel):
@@ -242,9 +242,9 @@ def api_submit(request: Request, payload: SubmitIn) -> SubmitOut:
 
 
 class CitoyenChatIn(BaseModel):
-    user_id: str
+    user_id: str = Field(..., max_length=128)
     message: str = Field(..., max_length=5000)
-    tenant_id: str = Field("ia-pipeline", description="Tenant ID")
+    tenant_id: str = Field("ia-pipeline", description="Tenant ID", max_length=128)
 
 
 class CitoyenChatOut(BaseModel):
