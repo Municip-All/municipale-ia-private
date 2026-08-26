@@ -2,6 +2,7 @@ import hmac
 import json
 import logging
 import os
+import uuid
 from contextlib import asynccontextmanager
 from collections.abc import AsyncGenerator
 from typing import Any
@@ -76,6 +77,14 @@ if not _API_KEY:
     else:
         logger.warning("WARNING: API_KEY not set, all endpoints are open")
 
+
+@app.middleware("http")
+async def request_id_middleware(request: Request, call_next):
+    rid = request.headers.get("X-Request-ID") or str(uuid.uuid4())
+    request.state.request_id = rid
+    response = await call_next(request)
+    response.headers["X-Request-ID"] = rid
+    return response
 
 @app.middleware("http")
 async def api_key_middleware(request: Request, call_next):
