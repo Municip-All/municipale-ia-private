@@ -5,14 +5,14 @@ import json
 import shutil
 from pathlib import Path
 
-import structlog
+import logging
 
 from data_preprocessing import main as preprocessing_main
 from model_inference import Predictor
 from train_model import main as training_main
 from utils import geo_bucket
 
-log = structlog.get_logger("municipall.main")
+logger = logging.getLogger("municipall.main")
 
 ART = Path("artifacts")
 DATA_CSV = ART / "preprocessed.csv"
@@ -24,18 +24,18 @@ METRICS_PATH = ART / "metrics.json"
 
 def ensure_preprocessing(force: bool) -> None:
     if force or not DATA_CSV.exists() or not TFIDF_PATH.exists():
-        log.info("preprocessing_start")
+        logger.info("preprocessing_start")
         preprocessing_main()
     else:
-        log.info("preprocessing_skipped")
+        logger.info("preprocessing_skipped")
 
 
 def ensure_training(force: bool) -> None:
     if force or not MODEL_PATH.exists() or not ENC_PATH.exists():
-        log.info("training_start")
+        logger.info("training_start")
         training_main()
     else:
-        log.info("training_skipped")
+        logger.info("training_skipped")
 
 
 def run_demo_inference(description: str, lat: float, lon: float, hour: int) -> dict:
@@ -49,9 +49,9 @@ def run_demo_inference(description: str, lat: float, lon: float, hour: int) -> d
 def clean_artifacts() -> None:
     if ART.exists():
         shutil.rmtree(ART)
-        log.info("artifacts_cleaned")
+        logger.info("artifacts_cleaned")
     else:
-        log.info("artifacts_empty")
+        logger.info("artifacts_empty")
 
 
 def main() -> None:
@@ -108,10 +108,10 @@ def main() -> None:
     ensure_training(force=args.force)
 
     if args.skip_demo:
-        log.info("pipeline_done_skip_demo")
+        logger.info("pipeline_done_skip_demo")
         return
 
-    log.info("demo_inference_start")
+    logger.info("demo_inference_start")
     demo = run_demo_inference(
         description=args.description, lat=args.lat, lon=args.lon, hour=args.hour
     )
@@ -121,13 +121,13 @@ def main() -> None:
         with open(METRICS_PATH, "r", encoding="utf-8") as f:
             metrics = json.load(f)
 
-    log.info(
-        "pipeline_done",
-        pred=demo["pred"],
-        proba=f"{demo['proba']:.3f}",
-        geo_bucket=demo["geo_bucket"],
-        accuracy=metrics.get("accuracy"),
-        f1_macro=metrics.get("f1_macro"),
+    logger.info(
+        "pipeline_done pred=%s proba=%s geo=%s acc=%s f1=%s",
+        demo["pred"],
+        f"{demo['proba']:.3f}",
+        demo["geo_bucket"],
+        metrics.get("accuracy", "NA"),
+        metrics.get("f1_macro", "NA"),
     )
 
 

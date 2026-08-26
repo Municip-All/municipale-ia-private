@@ -9,7 +9,6 @@ joblib
 redis
 litellm
 slowapi
-structlog
 mcp[cli]>=1.0
 psycopg[binary]>=3.0
 sentence-transformers>=3.0
