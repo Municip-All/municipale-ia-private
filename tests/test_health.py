@@ -22,7 +22,7 @@ def test_health_shows_degraded_when_db_unavailable():
         from api_fastapi import app
         app.state.limiter = MagicMock()
         with TestClient(app) as client:
-            with patch("api_fastapi.get_conninfo", side_effect=RuntimeError("no db")):
+            with patch("municipal.db.get_conninfo", side_effect=RuntimeError("no db")):
                 r = client.get("/health")
     assert r.status_code == 200
     body = r.json()
