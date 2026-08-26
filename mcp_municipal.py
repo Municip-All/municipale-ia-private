@@ -1,8 +1,3 @@
-######
-#   Serveur MCP — Municip'All (stdio)
-#   Lancer (Cursor/Claude Desktop) : voir docs/MCP_INTEGRATION.md
-#####
-
 from __future__ import annotations
 
 from mcp.server.fastmcp import FastMCP

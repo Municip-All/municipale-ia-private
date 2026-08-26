@@ -1,17 +1,15 @@
-######
-#   ALKAYA MEHMET
-#   EPITECH 2025
-#   PROJET EDP
-#####
-
 from pathlib import Path
+import logging
 import re
+
 import pandas as pd
 import numpy as np
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.model_selection import train_test_split
 import joblib
 from utils import geo_bucket
+
+logger = logging.getLogger("municipall.preprocessing")
 
 RAW_PATH = Path("data/raw_signalements.csv")
 OUT_DIR = Path("artifacts")
@@ -77,9 +75,7 @@ def main():
     keep_cols = ["description", "lat", "lon", "hour", "geo_bucket", "type"]
     df[keep_cols].to_csv(OUT_DIR / "preprocessed.csv", index=False)
 
-    print("✅ Preprocessing done.")
-    print(f"- Saved TFIDF to {OUT_DIR/'tfidf.joblib'}")
-    print(f"- Saved preprocessed CSV to {OUT_DIR/'preprocessed.csv'}")
+    logger.info("preprocessing_done tfidf=%s csv=%s", OUT_DIR / "tfidf.joblib", OUT_DIR / "preprocessed.csv")
 
 if __name__ == "__main__":
     main()

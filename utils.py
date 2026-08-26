@@ -1,9 +1,3 @@
-######
-#   ALKAYA MEHMET
-#   EPITECH 2025
-#   PROJET EDP
-#####
-
 import hashlib
 
 

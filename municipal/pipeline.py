@@ -13,10 +13,6 @@ from municipal.router import smart_route
 def submit_report(
     user_id: str, content: str, skip_duplicate_check: bool = False, tenant_id: str = "ia-pipeline"
 ) -> dict[str, Any]:
-    """
-    Enchaîne Smart-Analyzer → Smart-Router → Duplicate-Finder, puis insère.
-    Toute persistance : requêtes SQL paramétrées dans municipal.db.
-    """
     a = smart_analyzer(content, user_id)
     r = smart_route(content)
     status = "Open"

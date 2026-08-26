@@ -1,9 +1,3 @@
-######
-#   ALKAYA MEHMET
-#   EPITECH 2025
-#   PROJET EDP
-#####
-
 from pathlib import Path
 import joblib
 from scipy.sparse import hstack, csr_matrix
