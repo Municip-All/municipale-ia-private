@@ -15,6 +15,11 @@ from municipal.spam_sentiment import analyze_spam_sentiment_urgency
         ("", True),
         ("a", True),
         ("Nid de poule dangereux rue Victor Hugo", False),
+        (
+            "fv salut je veut fair ma pub irojgiortgjiortzjgiortnbviortnb",
+            True,
+        ),
+        ("bcdfghjklmnopqrstvwxyzzzzzxxxxxxbbbbbbbb", True),
     ],
 )
 def test_spam_detection(text: str, expect_spam: bool) -> None:
