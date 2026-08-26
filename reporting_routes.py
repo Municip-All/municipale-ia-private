@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import logging
 import re
 from typing import Any, Optional
 
@@ -14,6 +15,8 @@ from municipal.analyzer import smart_analyzer
 from municipal.router import smart_route
 from municipal.duplicate import duplicate_finder
 from municipal.rate_limit import limiter
+
+logger = logging.getLogger("municipall.reporting")
 
 router = APIRouter(prefix="/reporting", tags=["reporting"])
 
@@ -124,7 +127,7 @@ def _wants_urgent_top3(q: str) -> bool:
 
 class EnrichIn(BaseModel):
     report_id: int = Field(..., description="ID du signalement (INT, backend NestJS)")
-    tenant_id: str = Field(..., description="Tenant ID (backend)")
+    tenant_id: str = Field(..., description="Tenant ID (backend)", max_length=128)
     user_id: int | None = Field(None, description="User ID numérique")
     content: str = Field(..., description="Texte du signalement", max_length=5000)
     lat: float | None = Field(None)
@@ -201,9 +204,9 @@ def enrich_existing(request: Request, payload: EnrichIn) -> EnrichOut:
 
 
 class SubmitIn(BaseModel):
-    user_id: str = Field(..., description="UUID utilisateur")
+    user_id: str = Field(..., description="UUID utilisateur", max_length=128)
     content: str = Field(..., description="Texte du signalement", max_length=5000)
-    tenant_id: str = Field("ia-pipeline", description="Tenant ID")
+    tenant_id: str = Field("ia-pipeline", description="Tenant ID", max_length=128)
 
 
 class SubmitOut(BaseModel):
@@ -239,9 +242,9 @@ def api_submit(request: Request, payload: SubmitIn) -> SubmitOut:
 
 
 class CitoyenChatIn(BaseModel):
-    user_id: str
+    user_id: str = Field(..., max_length=128)
     message: str = Field(..., max_length=5000)
-    tenant_id: str = Field("ia-pipeline", description="Tenant ID")
+    tenant_id: str = Field("ia-pipeline", description="Tenant ID", max_length=128)
 
 
 class CitoyenChatOut(BaseModel):
@@ -270,6 +273,7 @@ def chat_citoyen(request: Request, payload: CitoyenChatIn) -> CitoyenChatOut:
         try:
             reply = _citoyen_llm(r, payload.message)
         except Exception:
+            logger.warning("citoyen LLM fallback to template")
             reply = _citoyen_template(r)
     else:
         reply = _citoyen_template(r)
@@ -307,6 +311,7 @@ def chat_mairie(request: Request, payload: MairieQueryIn) -> MairieQueryOut:
         try:
             answer = _mairie_llm(q, top)
         except Exception:
+            logger.warning("mairie LLM fallback to static summary")
             answer = _mairie_fallback(q, top)
         return MairieQueryOut(answer=answer, top_reports=top)
     if not wants:

@@ -1,11 +1,12 @@
 import hmac
 import json
+import logging
 import os
+import uuid
 from contextlib import asynccontextmanager
 from collections.abc import AsyncGenerator
 from typing import Any
 
-import structlog
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
@@ -17,7 +18,7 @@ from utils import geo_bucket, stable_hash
 from model_inference import ENC_PATH, MODEL_PATH, Predictor, TFIDF_PATH
 from reporting_routes import router as reporting_router
 
-log = structlog.get_logger("municipall.api")
+logger = logging.getLogger("municipall.api")
 
 
 def _ml_artifacts_ready() -> bool:
@@ -28,6 +29,7 @@ try:
     REDIS_AVAIL = True
 except Exception:
     REDIS_AVAIL = False
+    logger.debug("redis package not installed, caching disabled")
 
 predictor = None
 rds = None
@@ -45,6 +47,7 @@ async def lifespan(_app: FastAPI) -> AsyncGenerator[None, None]:
             )
             rds.ping()
         except Exception:
+            logger.warning("redis connection failed, caching disabled")
             rds = None
     yield
     if rds:
@@ -70,10 +73,18 @@ _IS_PROD = os.environ.get("NODE_ENV", "").strip() == "production"
 
 if not _API_KEY:
     if _IS_PROD:
-        log.error("api_key_missing_prod")
+        logger.error("FATAL: API_KEY not set in production — protected endpoints will reject all requests")
     else:
-        log.warning("api_key_missing_dev")
+        logger.warning("WARNING: API_KEY not set, all endpoints are open")
 
+
+@app.middleware("http")
+async def request_id_middleware(request: Request, call_next):
+    rid = request.headers.get("X-Request-ID") or str(uuid.uuid4())
+    request.state.request_id = rid
+    response = await call_next(request)
+    response.headers["X-Request-ID"] = rid
+    return response
 
 @app.middleware("http")
 async def api_key_middleware(request: Request, call_next):
@@ -139,6 +150,7 @@ def health(request: Request):
             rds.ping()
             checks["redis"] = "ok"
         except Exception:
+            logger.debug("redis ping failed during health check")
             checks["redis"] = "error"
             checks["status"] = "degraded"
     else:
@@ -148,6 +160,7 @@ def health(request: Request):
         get_conninfo()
         checks["database"] = "ok"
     except Exception:
+        logger.debug("database unreachable during health check")
         checks["database"] = "error"
         checks["status"] = "degraded"
     return checks
