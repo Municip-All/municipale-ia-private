@@ -1,3 +1,4 @@
+import hmac
 import json
 import logging
 import os
@@ -80,7 +81,7 @@ async def api_key_middleware(request: Request, call_next):
     is_protected = (path.startswith("/reporting") or path.startswith("/predict")) and not path.startswith("/health")
     if is_protected:
         if _API_KEY:
-            if request.headers.get("X-API-Key") != _API_KEY:
+            if not hmac.compare_digest(request.headers.get("X-API-Key", ""), _API_KEY):
                 from fastapi.responses import JSONResponse
                 return JSONResponse(status_code=401, content={"detail": "X-API-Key manquant ou invalide"})
         elif _IS_PROD:
