@@ -16,6 +16,7 @@ def _fake_analysis(spam: bool = False) -> dict:
         "tone": "neutre",
         "embedding": [0.01] * 384,
         "embedding_dim": 384,
+        "content_preview": "preview",
     }
 
 

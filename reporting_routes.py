@@ -9,7 +9,7 @@ import re
 from typing import Any, Optional
 
 import httpx
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Request
 from pydantic import BaseModel, Field
 
 from municipal.db import get_conninfo, top_urgent_by_sentiment, enrich_report
@@ -147,7 +147,7 @@ class EnrichOut(BaseModel):
 
 
 @router.post("/enrich", response_model=EnrichOut)
-def enrich_existing(payload: EnrichIn) -> EnrichOut:
+def enrich_existing(request: Request, payload: EnrichIn) -> EnrichOut:
     """
     Pipeline IA d'enrichissement d'un signalement **déjà créé** par le backend.
     Exécute : Smart-Analyzer → Smart-Router → Duplicate-Finder, puis UPDATE le report.
@@ -180,12 +180,8 @@ def enrich_existing(payload: EnrichIn) -> EnrichOut:
             if key in d
         }
         if d.get("is_duplicate") and d.get("match_id"):
-            try:
-                dup_id = int(d["match_id"])
-                ai_status = "Duplicate"
-            except (ValueError, TypeError):
-                dup_id = None
-                ai_status = "Open"
+            dup_id = d["match_id"]
+            ai_status = "Duplicate"
         else:
             ai_status = "Open"
 
@@ -229,7 +225,7 @@ class SubmitOut(BaseModel):
 
 
 @router.post("/submit", response_model=SubmitOut)
-def api_submit(payload: SubmitIn) -> SubmitOut:
+def api_submit(request: Request, payload: SubmitIn) -> SubmitOut:
     try:
         get_conninfo()
     except RuntimeError as e:
@@ -264,7 +260,7 @@ class CitoyenChatOut(BaseModel):
 
 
 @router.post("/chat/citoyen", response_model=CitoyenChatOut)
-def chat_citoyen(payload: CitoyenChatIn) -> CitoyenChatOut:
+def chat_citoyen(request: Request, payload: CitoyenChatIn) -> CitoyenChatOut:
     """
     Simule le bot citoyen : message rassurant + thématique (pipeline MCP) ;
     texte généré par **LLM** si LITELLM_API_KEY est définie, sinon texte prédéfini.
@@ -307,7 +303,7 @@ class MairieQueryOut(BaseModel):
 
 
 @router.post("/chat/mairie", response_model=MairieQueryOut)
-def chat_mairie(payload: MairieQueryIn) -> MairieQueryOut:
+def chat_mairie(request: Request, payload: MairieQueryIn) -> MairieQueryOut:
     """
     Dashboard textuel. Avec LITELLM_API_KEY : réponse générée par LLM (éventuels
     3 signalements Open les plus sensibles sur 7 jours si la question l'évoque).

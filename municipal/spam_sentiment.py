@@ -24,8 +24,40 @@ _FR_POSITIVE = re.compile(
 _FR_OFFTOPIC = re.compile(
     r"(?i)(recette\s+de|score\s+du\s+match|météo\s+à\slondres)",
 )
+_FR_SELFPROMO = re.compile(
+    r"(?i)(\bfaire\s+(ma|une|la|mon)\s+pub\b|\bfair\s+(ma|une|la)\s+pub\b|"
+    r"\bj[e']?\s+veu?[xt]\s+.{0,48}?\b(pub|fair\b)|"
+    r"\b(pub|promo)\s+pour\s+mon\s+(biz|business)\b)",
+)
+
+_VOWEL = re.compile(r"[aeiouyàâäéèêëïîôùûœæ]", re.I)
+_CONSONANT_RUN = re.compile(r"(?i)[bcdfghjklmnpqrstvwxzç]{10,}")
 
 MIN_CONTENT_LEN = 3
+
+
+def _looks_like_gibberish_or_noise(t: str) -> bool:
+    """Bruit : faux mots-clavier, faible densité alphabétique, suites de consonnes."""
+    if len(t) < 18:
+        return False
+    letters = sum(1 for c in t if c.isalpha())
+    if letters < 8:
+        return True
+    ratio = letters / max(len(t), 1)
+    if ratio < 0.42:
+        return True
+    if _CONSONANT_RUN.search(t):
+        return True
+    for w in re.findall(r"[A-Za-zÀ-ÖØ-öø-ÿ]+", t):
+        if len(w) < 22:
+            continue
+        vow = len(_VOWEL.findall(w))
+        if len(w) >= 22 and vow / len(w) <= 0.22:
+            return True
+    tokens = re.findall(r"[A-Za-zÀ-ÖØ-öø-ÿ]{2,}", t)
+    if len(t) > 45 and len(tokens) <= 4:
+        return True
+    return False
 
 
 def analyze_spam_sentiment_urgency(text: str) -> dict[str, Any]:
@@ -47,6 +79,12 @@ def analyze_spam_sentiment_urgency(text: str) -> dict[str, Any]:
     if _FR_OFFTOPIC.search(t) and "mairie" not in t.lower() and "rue" not in t.lower():
         out["is_spam"] = True
         out["spam_reasons"].append("hors_sujet_probable")
+    if _FR_SELFPROMO.search(t):
+        out["is_spam"] = True
+        out["spam_reasons"].append("promotion_ou_auto_pub")
+    if _looks_like_gibberish_or_noise(t):
+        out["is_spam"] = True
+        out["spam_reasons"].append("contenu_bruit_ou_faux_texte")
     # Score heuristique dans [-1, 1] (le LLM via MCP pourrait affiner côté client)
     score = 0.0
     if _FR_NEGATIVE.search(t):

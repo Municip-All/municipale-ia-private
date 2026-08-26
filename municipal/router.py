@@ -6,6 +6,7 @@ from typing import Any
 
 import numpy as np
 
+from municipal.config import ROUTER_MIN_COSINE_SIM
 from municipal.embeddings import embed_texts
 
 _lock = threading.Lock()
@@ -80,13 +81,23 @@ def smart_route(text: str) -> dict[str, Any]:
     v = embed_texts([t], normalize=True)[0]
     sims = mat @ v
     j = int(np.argmax(sims))
-    conf = float(sims[j])
+    raw_sim = float(sims[j])
+    if raw_sim < ROUTER_MIN_COSINE_SIM:
+        return {
+            "category": "Autre",
+            "municipal_service": "Secrétariat général",
+            "confidence": raw_sim,
+            "rationale": (
+                f"Faible correspondance avec les thèmes municipaux ({raw_sim:.2f}); "
+                "orientation générique jusqu'à clarification."
+            ),
+        }
     label = labels[j]
     return {
         "category": label["category"],
         "municipal_service": label["municipal_service"],
-        "confidence": max(0.0, min(1.0, (conf + 1) / 2)),
-        "rationale": f"Rapprochement sémantique avec le thème « {label['category']} » (score {conf:.2f})",
+        "confidence": raw_sim,
+        "rationale": f"Rapprochement sémantique avec le thème « {label['category']} » (score {raw_sim:.2f})",
     }
 
 
