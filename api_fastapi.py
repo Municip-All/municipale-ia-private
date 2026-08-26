@@ -28,6 +28,7 @@ try:
     REDIS_AVAIL = True
 except Exception:
     REDIS_AVAIL = False
+    logger.debug("redis package not installed, caching disabled")
 
 predictor = None
 rds = None
@@ -45,6 +46,7 @@ async def lifespan(_app: FastAPI) -> AsyncGenerator[None, None]:
             )
             rds.ping()
         except Exception:
+            logger.warning("redis connection failed, caching disabled")
             rds = None
     yield
     if rds:
@@ -139,6 +141,7 @@ def health(request: Request):
             rds.ping()
             checks["redis"] = "ok"
         except Exception:
+            logger.debug("redis ping failed during health check")
             checks["redis"] = "error"
             checks["status"] = "degraded"
     else:
@@ -148,6 +151,7 @@ def health(request: Request):
         get_conninfo()
         checks["database"] = "ok"
     except Exception:
+        logger.debug("database unreachable during health check")
         checks["database"] = "error"
         checks["status"] = "degraded"
     return checks
