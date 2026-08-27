@@ -15,6 +15,7 @@ from municipal.analyzer import smart_analyzer
 from municipal.router import smart_route
 from municipal.duplicate import duplicate_finder
 from municipal.rate_limit import limiter
+from municipal.agent_chat import AgentChatOut, mairie_fallback_chat, run_agent_chat
 
 logger = logging.getLogger("municipall.reporting")
 
@@ -338,3 +339,23 @@ def chat_mairie(request: Request, payload: MairieQueryIn) -> MairieQueryOut:
         lines
     )
     return MairieQueryOut(answer=answer, top_reports=rows)
+
+
+class AgentChatIn(BaseModel):
+    question: str = Field(..., description="Question de l'agent de mairie", max_length=2000)
+    tenant_id: str = Field("ia-pipeline", description="Tenant ID", max_length=128)
+
+
+@router.post("/chat/agent", response_model=AgentChatOut)
+@limiter.limit("10/minute")
+def chat_agent(request: Request, payload: AgentChatIn) -> AgentChatOut:
+    try:
+        get_conninfo()
+    except RuntimeError as e:
+        raise HTTPException(status_code=503, detail=str(e)) from e
+    if llm_configured():
+        try:
+            return run_agent_chat(payload.question)
+        except Exception:
+            logger.warning("agent endpoint fallback to mairie static mode")
+    return mairie_fallback_chat(payload.question)
