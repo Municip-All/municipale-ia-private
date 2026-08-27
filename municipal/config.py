@@ -26,12 +26,9 @@ def _build_database_url() -> str:
     user = os.environ.get("DATABASE_USER", "postgres")
     password = os.environ.get("DATABASE_PASSWORD", "")
     db = os.environ.get("DATABASE_NAME", "municipall")
-    if not password:
-        raise RuntimeError(
-            "DATABASE_PASSWORD is required when not using DATABASE_URL. "
-            "Set DATABASE_PASSWORD in your environment."
-        )
-    return f"postgresql://{user}:{password}@{host}:{port}/{db}"
+    if password:
+        return f"postgresql://{user}:{password}@{host}:{port}/{db}"
+    return f"postgresql://{user}@{host}:{port}/{db}"
 
 _database_url = None
 
