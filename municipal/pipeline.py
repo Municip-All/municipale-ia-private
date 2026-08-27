@@ -15,7 +15,7 @@ def submit_report(
 ) -> dict[str, Any]:
     a = smart_analyzer(content, user_id)
     r = smart_route(content)
-    status = "Open"
+    status = "En attente"
     dup_id: str | None = None
     dup_snapshot: dict[str, Any] | None = None
     if a.get("is_spam"):
@@ -40,7 +40,7 @@ def submit_report(
             if key in d
         }
         if d.get("is_duplicate") and d.get("match_id"):
-            status = "Duplicate"
+            status = "Doublon"
             dup_id = d["match_id"]
     else:
         dup_snapshot = {"skipped": True, "reason": "skip_duplicate_check"}
