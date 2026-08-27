@@ -318,7 +318,7 @@ curl -X POST http://localhost:8000/reporting/chat/mairie \
   "is_spam": false,
   "duplicate_of_id": null,
   "ai_confidence": 0.81,
-  "ai_status": "Open"
+  "ai_status": "En attente"
 }
 ```
 
@@ -336,7 +336,7 @@ curl http://localhost:8000/health
 
 **Attendu** :
 ```json
-{"status": "ok", "model_loaded": true}
+{"status": "ok", "model_loaded": true, "redis": true, "database": true}
 ```
 
 ---
@@ -429,10 +429,14 @@ psql -U mehmet -d municipall_v2 -c \
 | Métrique | Valeur |
 |----------|--------|
 | Temps d'enrichissement IA | **< 200 ms** |
-| Précision de classification | **~85%** (validation croisée) |
+| Précision de classification (RF, données synthétiques) | accuracy = 1.0 sur le jeu de test — à valider sur données réelles |
 | Seuil de détection doublon | **0.85** (cosine similarity) |
 | Dimensions des embeddings | **384** (MiniLM-L12-v2) |
 | Taille modèle embeddings | **~120 Mo** |
+
+> Le pipeline ML (TF-IDF + RandomForest) est entraîné sur des données synthétiques générées
+> (`data_preprocessing.py`). L'accuracy de 1.0 reflète la facilité du jeu synthétique, pas une
+> performance réelle. La promesse initiale de ~85% reste à étayer avec des données réelles.
 
 ---
 
@@ -450,21 +454,54 @@ psql -U mehmet -d municipall_v2 -c \
 
 ```
 municipale-ia-private/
-├── api_fastapi.py              # 🚀 Application FastAPI principale
-├── reporting_routes.py         # 📡 Routes /reporting/* 
+├── api_fastapi.py              # 🚀 Application FastAPI principale (/predict, /health)
+├── reporting_routes.py         # 📡 Routes /reporting/* (enrich, submit, chat)
+├── mcp_municipal.py            # 🔌 Serveur MCP (smart-analyzer, smart-router, duplicate-finder)
+├── main.py                     # 🏭 Pipeline ML : preprocessing → training → démo
+├── data_preprocessing.py       # 🧹 Préprocessing TF-IDF + OneHot (+ données synthétiques)
+├── train_model.py              # 🌲 Entraînement RandomForest + métriques
+├── model_inference.py          # 🔮 Prédiction avec le modèle entraîné
+├── utils.py                    # 🛠️ Utilitaires partagés
 ├── municipal/
-│   ├── analyzer.py             # 🤔 Smart-Analyzer (spam + sentiment)
-│   ├── router.py               # 🎯 Smart-Router (catégorisation)
+│   ├── analyzer.py             # 🤔 Smart-Analyzer (spam + sentiment + embedding)
+│   ├── router.py               # 🎯 Smart-Router (catégorisation sémantique)
 │   ├── duplicate.py            # 🔍 Duplicate-Finder
-│   ├── embeddings.py           # 🧠 Modèle sentence-transformers
-│   ├── db.py                   # 🐘 Opérations PostgreSQL
-│   ├── llm_client.py          # 🤖 Client LLM universel (LiteLLM)
-│   └── config.py               # ⚙️ Configuration
-├── db/schema.sql               # 📐 Schéma PostgreSQL unifié
+│   ├── pipeline.py             # 🔗 Orchestration submit_report
+│   ├── embeddings.py           # 🧠 Modèle sentence-transformers (lazy, thread-safe)
+│   ├── db.py                   # 🐘 Opérations PostgreSQL (psycopg3 + pgvector)
+│   ├── llm_client.py           # 🤖 Client LLM universel (LiteLLM)
+│   ├── spam_sentiment.py       # 🚫 Détection spam + sentiment (règles FR)
+│   ├── config.py               # ⚙️ Configuration env (lazy)
+│   └── rate_limit.py           # ⏱️ Rate limiting (slowapi)
+├── db/
+│   ├── schema.sql              # 📐 Schéma PostgreSQL unifié (NestJS + IA)
+│   └── migrate_hnsw.sql        # 📈 Migration index HNSW
+├── scripts/
+│   └── demo_llm_chat.py        # 🎤 Démo terminal (submit + chat LLM)
+├── tests/                      # ✅ Suite pytest (~55 tests, mocks par défaut)
+├── artifacts/                  # 📦 Modèles entraînés (joblib) + metrics.json
 ├── Dockerfile                  # 🐳 Conteneurisation
 ├── docker-compose.dev.yml      # 🏗️ Orchestration dev
+├── .github/workflows/          # 🔄 CI : tests pytest + build/push Docker
 └── requirements.txt            # 📦 Dépendances Python
 ```
+
+---
+
+## 🎯 Conventions de statuts
+
+Vocabulaire **français** unifié avec le backend NestJS (`report.entity.ts`, `ai-enrichment.processor.ts`) :
+
+| Statut | Qui l'écrit | Signification |
+|--------|-------------|---------------|
+| `En attente` | NestJS (création), IA (pipeline directe) | Signalement à traiter |
+| `Doublon` | NestJS + IA | Rattaché à un signalement existant (`duplicate_of_id`) |
+| `Rejeté` | NestJS (processor) | Détecté spam par l'IA via enrich |
+| `Spam` | IA (pipeline directe `/submit`) | Détecté spam |
+| `Open` | Historique | Supporté en lecture par `top_urgent_by_sentiment` |
+
+> Note : la colonne `reports.user_id` est `INTEGER` (schéma TypeORM). Les `user_id` non
+> numériques (UUID, chaînes) sont ignorés avec un warning (`municipal/db.py::_coerce_int`).
 
 ---
 
@@ -474,12 +511,11 @@ Municip'All IA transforme un **processus manuel de 15-30 minutes** en un **trait
 
 **Impact pour la ville** :
 - ⚡ Réactivité : Traitement instantané
-- 🎯 Précision : 85% de bonne classification
+- 🎯 Précision : Classification sémantique via embeddings + RF
 - 🔗 Anti-doublon : Détection sémantique intelligente
 - 💬 Communication : Chatbots citoyen & mairie
 
 **Prochaines évolutions** :
-- HNSW index pour recherche vectorielle à grande échelle
 - Fine-tuning du modèle sur données réelles
 - Intégration WhatsApp pour signalements vocaux
 
