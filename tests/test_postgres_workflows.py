@@ -38,8 +38,8 @@ def test_submit_open_then_duplicate_same_text(require_postgres: None, random_use
     first = submit_report(random_user_id, text)
     second = submit_report(random_user_id, text)
     try:
-        assert first["status"] == "Open"
-        assert second["status"] == "Duplicate"
+        assert first["status"] == "En attente"
+        assert second["status"] == "Doublon"
         assert second["duplicate_of_id"] == first["report_id"]
     finally:
         delete_reports_by_ids([second["report_id"], first["report_id"]])
@@ -60,7 +60,7 @@ def test_top_urgent_lists_most_negative_sentiment(require_postgres: None, random
         skip_duplicate_check=True,
     )
     try:
-        assert a["status"] == "Open" and b["status"] == "Open"
+        assert a["status"] == "En attente" and b["status"] == "En attente"
         rows = top_urgent_by_sentiment(days=7, limit=100)
         ids = [r["id"] for r in rows]
         assert a["report_id"] in ids and b["report_id"] in ids
