@@ -1,5 +1,12 @@
 import os
 
+try:
+    from dotenv import load_dotenv
+
+    load_dotenv()
+except ImportError:
+    pass
+
 EMBEDDING_MODEL = os.environ.get(
     "MUNICIPAL_EMBEDDING_MODEL", "paraphrase-multilingual-MiniLM-L12-v2"
 )
