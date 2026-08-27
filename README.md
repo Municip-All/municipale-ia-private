@@ -281,6 +281,31 @@ curl -X POST http://localhost:8000/reporting/chat/mairie \
 }
 ```
 
+### 🤖 Agent IA Mairie (tool-calling)
+
+Assistant conversationnel pour le back-office : le LLM décide lui-même d'appeler
+les outils IA (`smart_analyzer`, `smart_route`, `duplicate_finder`,
+`top_urgent_by_sentiment`) via le function-calling LiteLLM, puis synthétise la
+réponse. Max 4 itérations d'outils ; si le LLM échoue, repli automatique sur le
+comportement statique du chat mairie. Rate limit 10/minute.
+
+```bash
+curl -X POST http://localhost:8000/reporting/chat/agent \
+  -H "Content-Type: application/json" \
+  -d '{"question": "Quels sont les 3 problèmes les plus urgents cette semaine ?"}'
+```
+
+**Réponse** :
+```json
+{
+  "answer": "Les problèmes les plus urgents concernent la voirie...",
+  "top_reports": [{"id": 5, "content": "...", "category": "Voirie", "sentiment_score": -0.9}],
+  "analyses": [{"tool": "top_urgent_by_sentiment", "arguments": {"days": 7, "limit": 3}, "result": []}],
+  "tools_used": ["top_urgent_by_sentiment"],
+  "fallback": false
+}
+```
+
 ---
 
 ## API & Endpoints
@@ -293,6 +318,7 @@ curl -X POST http://localhost:8000/reporting/chat/mairie \
 | `POST` | `/reporting/submit` | Crée un signalement avec pipeline complète |
 | `POST` | `/reporting/chat/citoyen` | Chatbot pour les citoyens |
 | `POST` | `/reporting/chat/mairie` | Chatbot pour les agents municipaux |
+| `POST` | `/reporting/chat/agent` | Agent LLM tool-calling pour le back-office mairie |
 | `GET` | `/health` | État du service et des modèles |
 
 ### Exemple d'enrichissement (/reporting/enrich)
