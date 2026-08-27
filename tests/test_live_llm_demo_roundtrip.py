@@ -53,7 +53,7 @@ def test_live_demo_submit_then_llm_reply() -> None:
     )
 
     outcome = submit_report(uid, phrase)
-    assert "report_id" in outcome and outcome["status"] in ("Open", "Duplicate", "Spam")
+    assert "report_id" in outcome and outcome["status"] in ("En attente", "Doublon", "Spam")
     assert outcome.get("analysis") and "spam_reasons" in outcome["analysis"]
 
     msgs = [
