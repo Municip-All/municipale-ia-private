@@ -11,7 +11,26 @@ env:
   IMAGE_NAME: ${{ github.repository }}/ia
 
 jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run tests (unit, mocked)
+        run: pytest -m "not postgres and not slow and not llm_demo and not integration"
+
   build:
+    needs: tests
     runs-on: ubuntu-latest
     permissions:
       contents: read
