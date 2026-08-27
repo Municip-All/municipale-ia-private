@@ -8,7 +8,7 @@ from fastapi.testclient import TestClient
 def _report_open() -> dict:
     return {
         "report_id": "r1",
-        "status": "Open",
+        "status": "En attente",
         "category": "Voirie",
         "municipal_service": "Services techniques",
         "sentiment_score": -0.1,
@@ -36,7 +36,7 @@ class TestReportingSubmitMocked:
                 )
         assert r.status_code == 200
         body = r.json()
-        assert body["status"] == "Open"
+        assert body["status"] == "En attente"
         assert body["category"] == "Voirie"
 
 
@@ -91,7 +91,7 @@ class TestMairieChatMocked:
                 "content": "Urgence éclairage",
                 "category": "Éclairage public",
                 "sentiment_score": -0.9,
-                "status": "Open",
+                "status": "En attente",
                 "created_at": None,
                 "municipal_service": "ST",
             }
