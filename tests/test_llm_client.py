@@ -48,10 +48,12 @@ def test_chat_completion_bad_payload_raises():
 @pytest.mark.integration
 def test_llm_live():
     """
-    Appel réel — exiger LITELLM_API_KEY dans l'environnement (ne jamais commiter la clé).
+    Appel réel — opt-in explicite : RUN_LIVE_LLM_TEST=1 + LITELLM_API_KEY dans l'environnement.
     """
     import os
 
+    if (os.environ.get("RUN_LIVE_LLM_TEST") or "").strip() != "1":
+        pytest.skip("RUN_LIVE_LLM_TEST != 1 (intégration opt-in)")
     key = (os.environ.get("LITELLM_API_KEY") or "").strip()
     if not key:
         pytest.skip("LITELLM_API_KEY non définie (intégration)")
