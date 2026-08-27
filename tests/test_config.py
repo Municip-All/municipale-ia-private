@@ -15,13 +15,13 @@ def test_build_database_url_uses_env_url():
             cfg._database_url = None
 
 
-def test_build_database_url_requires_password():
-    with patch.dict("os.environ", {"DATABASE_URL": "", "DATABASE_PASSWORD": ""}, clear=False):
+def test_build_database_url_trust_auth_no_password():
+    with patch.dict("os.environ", {"DATABASE_URL": "", "DATABASE_PASSWORD": "", "DATABASE_USER": "mehmet", "DATABASE_HOST": "localhost", "DATABASE_PORT": "5432", "DATABASE_NAME": "municipall"}, clear=False):
         import municipal.config as cfg
         cfg._database_url = None
         try:
-            with pytest.raises(RuntimeError, match="DATABASE_PASSWORD"):
-                _build_database_url()
+            url = _build_database_url()
+            assert url == "postgresql://mehmet@localhost:5432/municipall"
         finally:
             cfg._database_url = None
 
