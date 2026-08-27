@@ -29,7 +29,7 @@ def _citoyen_template(r: dict[str, Any]) -> str:
             "Votre message a été enregistré pour modération (contenu signalé comme non conforme). "
             "Les signalements publics doivent concerner la vie municipale."
         )
-    if r["status"] == "Duplicate":
+    if r["status"] == "Doublon":
         return (
             f"Nous avons détecté un signalement très proche du vôtre déjà en cours. "
             f"Votre demande est classée en doublon et rattachée au dossier existant (thématique : {cat})."
@@ -75,7 +75,7 @@ def _citoyen_llm(r: dict[str, Any], user_message: str) -> str:
 
 def _mairie_llm(query: str, top_reports: list[dict[str, Any]]) -> str:
     if top_reports:
-        ctx = "Données (signalements Open, urgence liée au sentiment) :\n" + json.dumps(
+        ctx = "Données (signalements ouverts, urgence liée au sentiment) :\n" + json.dumps(
             top_reports, ensure_ascii=False, default=str
         )
         u = f"Question : {query}\n\n{ctx}\n\nRéponds en français, de façon synthétique (liste ou paragraphe court)."
@@ -176,9 +176,9 @@ def enrich_existing(request: Request, payload: EnrichIn) -> EnrichOut:
         }
         if d.get("is_duplicate") and d.get("match_id"):
             dup_id = d["match_id"]
-            ai_status = "Duplicate"
+            ai_status = "Doublon"
         else:
-            ai_status = "Open"
+            ai_status = "En attente"
 
     enrich_report(
         report_id=payload.report_id,
