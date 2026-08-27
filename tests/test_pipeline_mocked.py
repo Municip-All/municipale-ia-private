@@ -41,9 +41,9 @@ def test_pipeline_duplicate_when_finder_matches() -> None:
             ):
                 with patch("municipal.pipeline.insert_report", return_value="rid-2") as ins:
                     out = submit_report("00000000-0000-0000-0000-000000000002", "trou dans la route")
-    assert out["status"] == "Duplicate"
+    assert out["status"] == "Doublon"
     assert out["duplicate_of_id"] == "original-uuid"
-    assert ins.call_args[1]["status"] == "Duplicate"
+    assert ins.call_args[1]["status"] == "Doublon"
 
 
 def test_pipeline_open_when_no_duplicate() -> None:
@@ -55,7 +55,7 @@ def test_pipeline_open_when_no_duplicate() -> None:
             ):
                 with patch("municipal.pipeline.insert_report", return_value="rid-3"):
                     out = submit_report("00000000-0000-0000-0000-000000000003", "banc cassé")
-    assert out["status"] == "Open"
+    assert out["status"] == "En attente"
     assert out["duplicate_of_id"] is None
 
 
@@ -70,4 +70,4 @@ def test_pipeline_skip_duplicate_check_flag() -> None:
                         skip_duplicate_check=True,
                     )
     dup.assert_not_called()
-    assert out["status"] == "Open"
+    assert out["status"] == "En attente"
