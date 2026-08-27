@@ -26,7 +26,7 @@ def test_api_key_allows_with_valid_key():
         with patch("reporting_routes.get_conninfo", return_value="postgresql://mock"):
             with patch("reporting_routes.llm_configured", return_value=False):
                 with patch("reporting_routes.submit_report", return_value={
-                    "report_id": "r1", "status": "Open", "category": "Voirie",
+                    "report_id": "r1", "status": "En attente", "category": "Voirie",
                     "municipal_service": "ST", "sentiment_score": -0.1,
                     "is_spam": False, "duplicate_of_id": None, "smart_router": {},
                 }):
