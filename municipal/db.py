@@ -1,10 +1,13 @@
 from __future__ import annotations
 
+import logging
 import os
 from contextlib import contextmanager
 from typing import Any, Generator, Optional
 
 from municipal.config import get_database_url
+
+logger = logging.getLogger("municipall.db")
 
 _conninfo: str | None = None
 
@@ -126,6 +129,20 @@ def find_nearest_report_by_embedding(
             }
 
 
+def _coerce_int(value: Any, field: str) -> int | None:
+    if value is None or value == "":
+        return None
+    if isinstance(value, bool):
+        return None
+    if isinstance(value, int):
+        return value
+    try:
+        return int(str(value).strip())
+    except (ValueError, TypeError):
+        logger.warning("%s non numérique ignoré (colonne INTEGER) : %s", field, value)
+        return None
+
+
 def insert_report(
     user_id: str,
     content: str,
@@ -137,17 +154,9 @@ def insert_report(
     municipal_service: str | None,
     tenant_id: str = "ia-pipeline",
 ) -> str:
-    try:
-        uid = int(user_id) if user_id else None
-    except (ValueError, TypeError):
-        uid = None
+    uid = _coerce_int(user_id, "user_id")
     vec = "[" + ",".join(str(float(x)) for x in embedding) + "]"
-    dup = None
-    if duplicate_of_id:
-        try:
-            dup = int(duplicate_of_id)
-        except (ValueError, TypeError):
-            dup = None
+    dup = _coerce_int(duplicate_of_id, "duplicate_of_id")
     with get_connection() as conn:
         with conn.cursor() as cur:
             cur.execute(
@@ -189,7 +198,7 @@ def top_urgent_by_sentiment(
                        status, created_at, municipal_service
                 FROM reports
                 WHERE created_at >= NOW() - (%s::int * INTERVAL '1 day')
-                  AND status = 'Open'
+                  AND status IN ('En attente', 'Open')
                 ORDER BY sentiment_score ASC, created_at DESC
                 LIMIT %s
                 """,
