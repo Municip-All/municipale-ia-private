@@ -11,7 +11,7 @@ Exemple (retour compact identique au curl API) :
   python scripts/demo_llm_chat.py --submit-only \\
     -m "Nid de poule rue de la Paix"
 
-  {"report_id":"<uuid>","status":"Open", ...}
+  {"report_id":"<id>","status":"En attente", ...}
 
 Interactif :
 
