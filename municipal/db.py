@@ -187,6 +187,149 @@ def insert_report(
             return str(r[0])
 
 
+_REPORT_ORDER_WHITELIST: dict[str, str] = {
+    "created_at_desc": "created_at DESC",
+    "created_at_asc": "created_at ASC",
+    "updated_at_desc": "updated_at DESC",
+    "sentiment_asc": "sentiment_score ASC, created_at DESC",
+    "sentiment_desc": "sentiment_score DESC, created_at DESC",
+    "id_desc": "id DESC",
+    "id_asc": "id ASC",
+}
+
+_REPORT_GROUP_WHITELIST: dict[str, str] = {
+    "category": "category",
+    "status": "status",
+    "municipal_service": "municipal_service",
+    "ai_category": "ai_category",
+}
+
+REPORT_ORDER_VALUES: list[str] = list(_REPORT_ORDER_WHITELIST)
+REPORT_GROUP_VALUES: list[str] = list(_REPORT_GROUP_WHITELIST)
+
+_REPORT_STATUS_ALIASES: dict[str, str] = {
+    "en attente": "En attente",
+    "en cours": "En cours",
+    "résolu": "Résolu",
+    "resolu": "Résolu",
+    "doublon": "Doublon",
+    "rejeté": "Rejeté",
+    "rejete": "Rejeté",
+    "spam": "Spam",
+    "pending": "En attente",
+    "in_progress": "En cours",
+    "resolved": "Résolu",
+    "closed": "Résolu",
+    "rejected": "Rejeté",
+    "duplicate": "Doublon",
+}
+
+
+def _normalize_status_list(status: Any) -> list[str]:
+    if status is None:
+        return []
+    raw = status if isinstance(status, (list, tuple)) else [status]
+    out: list[str] = []
+    for s in raw:
+        if s is None:
+            continue
+        text = str(s).strip()
+        if not text:
+            continue
+        out.append(_REPORT_STATUS_ALIASES.get(text.lower(), text))
+    return out
+
+
+def query_reports(
+    status: str | list[str] | None = None,
+    category: str | None = None,
+    days: int = 30,
+    order_by: str = "created_at_desc",
+    limit: int = 20,
+) -> list[dict[str, Any]]:
+    statuses = _normalize_status_list(status)
+    order_sql = _REPORT_ORDER_WHITELIST.get(
+        str(order_by or "").strip().lower(),
+        _REPORT_ORDER_WHITELIST["created_at_desc"],
+    )
+    n_days = max(1, min(365, _coerce_int(days, "days") or 30))
+    conditions = ["created_at >= NOW() - (%s::int * INTERVAL '1 day')"]
+    params: list[Any] = [n_days]
+    if statuses:
+        conditions.append("status = ANY(%s)")
+        params.append(statuses)
+    cat = str(category or "").strip()
+    if cat:
+        conditions.append("LOWER(category) = LOWER(%s)")
+        params.append(cat)
+    n_limit = max(1, min(50, _coerce_int(limit, "limit") or 20))
+    sql = (
+        "SELECT id, tenant_id, user_id, description, category, status, "
+        "sentiment_score, ai_confidence, is_spam, duplicate_of_id, "
+        "municipal_service, ai_category, created_at, updated_at "
+        f"FROM reports WHERE {' AND '.join(conditions)} "
+        f"ORDER BY {order_sql} LIMIT %s"
+    )
+    params.append(n_limit)
+    with get_connection() as conn:
+        with conn.cursor() as cur:
+            cur.execute(sql, tuple(params))
+            rows = cur.fetchall()
+    out: list[dict[str, Any]] = []
+    for r in rows:
+        out.append(
+            {
+                "id": r[0],
+                "tenant_id": r[1],
+                "user_id": r[2],
+                "content": r[3],
+                "category": r[4],
+                "status": r[5],
+                "sentiment_score": r[6],
+                "ai_confidence": r[7],
+                "is_spam": r[8],
+                "duplicate_of_id": r[9],
+                "municipal_service": r[10],
+                "ai_category": r[11],
+                "created_at": r[12].isoformat() if r[12] else None,
+                "updated_at": r[13].isoformat() if r[13] else None,
+            }
+        )
+    return out
+
+
+def count_reports(
+    group_by: str = "status", days: int | None = None
+) -> list[dict[str, Any]]:
+    col = _REPORT_GROUP_WHITELIST.get(
+        str(group_by or "").strip().lower(), _REPORT_GROUP_WHITELIST["status"]
+    )
+    conditions: list[str] = []
+    params: list[Any] = []
+    n_days = _coerce_int(days, "days")
+    if n_days is not None:
+        conditions.append("created_at >= NOW() - (%s::int * INTERVAL '1 day')")
+        params.append(max(1, min(365, n_days)))
+    where = f"WHERE {' AND '.join(conditions)}" if conditions else ""
+    sql = (
+        f"SELECT {col} AS group_key, COUNT(*) AS count FROM reports {where} "
+        "GROUP BY " + col + " ORDER BY count DESC, group_key ASC"
+    )
+    with get_connection() as conn:
+        with conn.cursor() as cur:
+            cur.execute(sql, tuple(params))
+            rows = cur.fetchall()
+    out: list[dict[str, Any]] = []
+    for r in rows:
+        out.append(
+            {
+                "group_key": r[0] if r[0] is not None else "non renseigné",
+                "count": int(r[1]),
+            }
+        )
+    return out
+
+
 def top_urgent_by_sentiment(
     days: int = 7, limit: int = 3
 ) -> list[dict[str, Any]]:
