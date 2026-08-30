@@ -8,7 +8,13 @@ from typing import Any
 from pydantic import BaseModel, Field
 
 from municipal.analyzer import smart_analyzer
-from municipal.db import top_urgent_by_sentiment
+from municipal.db import (
+    REPORT_GROUP_VALUES,
+    REPORT_ORDER_VALUES,
+    count_reports,
+    query_reports,
+    top_urgent_by_sentiment,
+)
 from municipal.duplicate import duplicate_finder
 from municipal.embeddings import embed_one
 from municipal.llm_client import chat_completion_tools
@@ -20,15 +26,20 @@ _MAX_AGENT_STEPS = 4
 _MAX_TEXT_LEN = 5000
 _MAX_QUESTION_LEN = 2000
 
+_REPORT_STATUS_VALUES = ["En attente", "En cours", "Résolu", "Doublon", "Rejeté", "Spam"]
+
 AGENT_SYSTEM_PROMPT = (
-    "Tu es l'assistant IA des agents de mairie du back-office Municip'All. "
-    "Réponds toujours en français, de façon opérationnelle, factuelle et synthétique. "
+    "Tu es l'assistant IA professionnel des agents de mairie du back-office Municip'All. "
+    "Réponds toujours en français : synthétique, opérationnel, chiffres à l'appui. "
     "Tu disposes d'outils : smart_analyzer (spam/sentiment/urgence d'un texte), "
     "smart_route (catégorie municipale et service compétent), "
     "duplicate_finder (recherche de doublon sémantique), "
-    "top_urgent_by_sentiment (signalements ouverts les plus urgents). "
-    "Appelle un outil dès que la question porte sur des données réelles des signalements. "
-    "Appuie ta réponse sur les résultats des outils en citant les scores, catégories et IDs. "
+    "top_urgent_by_sentiment (signalements ouverts les plus urgents), "
+    "query_reports (liste filtrée des signalements : statut, catégorie, période, tri), "
+    "count_reports (comptages agrégés par catégorie ou statut). "
+    "Appelle un ou plusieurs outils dès que la question porte sur des données réelles des signalements. "
+    "Appuie ta réponse sur les résultats des outils en citant les IDs, statuts, catégories et scores. "
+    "Termine toujours par une action concrète proposée : un signalement à traiter, à requalifier ou à clôturer. "
     "Si aucun outil n'est pertinent, réponds directement sans en appeler."
 )
 
@@ -132,6 +143,77 @@ AGENT_TOOLS: list[dict[str, Any]] = [
             },
         },
     },
+    {
+        "type": "function",
+        "function": {
+            "name": "query_reports",
+            "description": (
+                "Liste les signalements de la base avec filtres combinables : statut, catégorie, "
+                "période en jours, tri et nombre de résultats. Pour toute question du type "
+                "« quels travaux sont en cours », « signalements récents de la voirie », "
+                "« derniers signalements rejetés »."
+            ),
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "status": {
+                        "type": "string",
+                        "description": "Statut des signalements recherchés",
+                        "enum": _REPORT_STATUS_VALUES,
+                    },
+                    "category": {
+                        "type": "string",
+                        "description": (
+                            "Catégorie municipale exacte "
+                            "(ex : Voirie, Éclairage public, Espaces verts)"
+                        ),
+                    },
+                    "days": {
+                        "type": "integer",
+                        "description": "Période de recherche en jours (1-365, défaut 30)",
+                    },
+                    "order_by": {
+                        "type": "string",
+                        "description": "Tri des résultats (défaut created_at_desc)",
+                        "enum": REPORT_ORDER_VALUES,
+                    },
+                    "limit": {
+                        "type": "integer",
+                        "description": "Nombre maximum de résultats (1-50, défaut 20)",
+                    },
+                },
+                "required": [],
+                "additionalProperties": False,
+            },
+        },
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "count_reports",
+            "description": (
+                "Compte les signalements agrégés par groupe : catégorie, statut, service municipal "
+                "ou catégorie IA. Pour les questions du type « combien de signalements par catégorie » "
+                "ou « répartition par statut »."
+            ),
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "group_by": {
+                        "type": "string",
+                        "description": "Champ d'agrégation (défaut status)",
+                        "enum": REPORT_GROUP_VALUES,
+                    },
+                    "days": {
+                        "type": "integer",
+                        "description": "Période optionnelle en jours (1-365)",
+                    },
+                },
+                "required": [],
+                "additionalProperties": False,
+            },
+        },
+    },
 ]
 
 
@@ -196,6 +278,20 @@ def execute_tool(name: str, arguments: dict[str, Any]) -> Any:
             days=_coerce_bounded_int(arguments.get("days"), 7, 1, 90),
             limit=_coerce_bounded_int(arguments.get("limit"), 3, 1, 20),
         )
+    if name == "query_reports":
+        return query_reports(
+            status=arguments.get("status"),
+            category=arguments.get("category"),
+            days=_coerce_bounded_int(arguments.get("days"), 30, 1, 365),
+            order_by=str(arguments.get("order_by") or "created_at_desc"),
+            limit=_coerce_bounded_int(arguments.get("limit"), 20, 1, 50),
+        )
+    if name == "count_reports":
+        days = _coerce_optional_int(arguments.get("days"))
+        return count_reports(
+            group_by=str(arguments.get("group_by") or "status"),
+            days=max(1, min(365, days)) if days is not None else None,
+        )
     raise ValueError(f"outil_inconnu:{name}")
 
 
@@ -241,6 +337,74 @@ def _wants_urgent_top3(q: str) -> bool:
     )
 
 
+_FALLBACK_STATUS_PATTERNS: list[tuple[str, str]] = [
+    (r"en cours|travaux", "En cours"),
+    (r"en attente|non trait", "En attente"),
+    (r"résolu|resolu|clôtur|clotur", "Résolu"),
+    (r"rejet", "Rejeté"),
+    (r"doublon", "Doublon"),
+    (r"spam|indésirable", "Spam"),
+]
+
+_FALLBACK_GROUP_LABELS: dict[str, str] = {
+    "category": "catégorie",
+    "status": "statut",
+    "municipal_service": "service municipal",
+    "ai_category": "catégorie IA",
+}
+
+
+def _fallback_status_for(q: str) -> str | None:
+    ql = (q or "").lower()
+    for pattern, status in _FALLBACK_STATUS_PATTERNS:
+        if re.search(pattern, ql):
+            return status
+    return None
+
+
+def _wants_category_breakdown(q: str) -> bool:
+    return bool(
+        re.search(r"par cat[ée]gorie|r[ée]partition|combien", (q or "").lower())
+    )
+
+
+def _format_query_rows(rows: list[dict[str, Any]], status: str) -> str:
+    if not rows:
+        return (
+            f"Aucun signalement « {status} » sur la période récente. "
+            "Action suggérée : élargir la période ou consulter le tableau complet."
+        )
+    lines = []
+    for r in rows[:10]:
+        content = str(r.get("content") or "")
+        created = str(r.get("created_at") or "")[:10]
+        lines.append(
+            f"- #{r.get('id')} [{r.get('category')}] "
+            f"{content[:120]}{'…' if len(content) > 120 else ''} ({created})"
+        )
+    return (
+        f"Signalements « {status} » ({len(rows)} résultat(s)) :\n"
+        + "\n".join(lines)
+        + "\nAction suggérée : traiter en priorité les signalements au sentiment le plus négatif."
+    )
+
+
+def _format_counts(rows: list[dict[str, Any]], group_by: str) -> str:
+    if not rows:
+        return (
+            "Aucun signalement en base sur la période demandée. "
+            "Action suggérée : vérifier la période ou la connexion à la base."
+        )
+    total = sum(int(r.get("count") or 0) for r in rows)
+    lines = [f"- {r.get('group_key')} : {r.get('count')}" for r in rows[:12]]
+    label = _FALLBACK_GROUP_LABELS.get(group_by, group_by)
+    return (
+        f"Répartition des signalements par {label} ({total} au total) :\n"
+        + "\n".join(lines)
+        + "\nAction suggérée : traiter d'abord le groupe le plus fourni."
+    )
+
+
 def _format_urgent_rows(rows: list[dict[str, Any]]) -> str:
     lines = []
     for i, r in enumerate(rows, 1):
@@ -272,6 +436,31 @@ def mairie_fallback_chat(question: str) -> AgentChatOut:
                 "Aucun signalement ouvert sur les 7 derniers jours ou base vide. "
                 "Vérifiez la période ou consultez le système complet."
             ),
+            fallback=True,
+        )
+    if _wants_category_breakdown(question):
+        try:
+            counts = count_reports(group_by="category")
+        except Exception as e:
+            logger.warning("agent fallback db unreachable: %s", e)
+            return AgentChatOut(
+                answer="La base de signalements est momentanément indisponible. Réessayez plus tard.",
+                fallback=True,
+            )
+        return AgentChatOut(answer=_format_counts(counts, "category"), fallback=True)
+    status = _fallback_status_for(question)
+    if status:
+        try:
+            rows = query_reports(status=status, days=30, order_by="created_at_desc", limit=10)
+        except Exception as e:
+            logger.warning("agent fallback db unreachable: %s", e)
+            return AgentChatOut(
+                answer="La base de signalements est momentanément indisponible. Réessayez plus tard.",
+                fallback=True,
+            )
+        return AgentChatOut(
+            answer=_format_query_rows(rows, status),
+            top_reports=rows,
             fallback=True,
         )
     return AgentChatOut(
@@ -326,7 +515,10 @@ def run_agent_chat(question: str) -> AgentChatOut:
                 )
                 analyses.append(trace)
                 tools_used.append(name)
-                if name == "top_urgent_by_sentiment" and isinstance(trace.get("result"), list):
+                if isinstance(trace.get("result"), list) and name in (
+                    "top_urgent_by_sentiment",
+                    "query_reports",
+                ):
                     top_reports = trace["result"]
         messages.append(
             {
