@@ -25,6 +25,13 @@ def reporting_client(reporting_app: FastAPI) -> TestClient:
     return TestClient(reporting_app)
 
 
+@pytest.fixture(autouse=True)
+def reset_rate_limiter() -> None:
+    from municipal.rate_limit import limiter
+
+    limiter._storage.reset()
+
+
 @pytest.fixture
 def postgres_enabled() -> bool:
     return bool((os.environ.get("DATABASE_URL") or "").strip())
