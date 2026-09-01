@@ -31,9 +31,11 @@ _REPORT_STATUS_VALUES = ["En attente", "En cours", "Résolu", "Doublon", "Rejet�
 AGENT_SYSTEM_PROMPT = (
     "Tu es l'assistant IA professionnel des agents de mairie du back-office Municip'All. "
     "Réponds toujours en français : synthétique, opérationnel, chiffres à l'appui. "
+    "Tu ne vois que les signalements de la commune de l'agent connecté : "
+    "ne mentionne jamais d'autres communes. "
     "Tu disposes d'outils : smart_analyzer (spam/sentiment/urgence d'un texte), "
     "smart_route (catégorie municipale et service compétent), "
-    "duplicate_finder (recherche de doublon sémantique), "
+    "duplicate_finder (recherche de doublon sémantique dans la commune), "
     "top_urgent_by_sentiment (signalements ouverts les plus urgents), "
     "query_reports (liste filtrée des signalements : statut, catégorie, période, tri), "
     "count_reports (comptages agrégés par catégorie ou statut). "
@@ -258,7 +260,7 @@ def _coerce_optional_int(value: Any) -> int | None:
         return None
 
 
-def execute_tool(name: str, arguments: dict[str, Any]) -> Any:
+def execute_tool(name: str, arguments: dict[str, Any], tenant_id: str | None = None) -> Any:
     if name == "smart_analyzer":
         result = smart_analyzer(_coerce_text(arguments.get("text")))
         result.pop("embedding", None)
@@ -272,11 +274,13 @@ def execute_tool(name: str, arguments: dict[str, Any]) -> Any:
             embedding,
             exclude_report_id=_coerce_optional_int(arguments.get("exclude_report_id")),
             threshold=_coerce_threshold(arguments.get("threshold")),
+            tenant_id=tenant_id,
         )
     if name == "top_urgent_by_sentiment":
         return top_urgent_by_sentiment(
             days=_coerce_bounded_int(arguments.get("days"), 7, 1, 90),
             limit=_coerce_bounded_int(arguments.get("limit"), 3, 1, 20),
+            tenant_id=tenant_id,
         )
     if name == "query_reports":
         return query_reports(
@@ -285,12 +289,14 @@ def execute_tool(name: str, arguments: dict[str, Any]) -> Any:
             days=_coerce_bounded_int(arguments.get("days"), 30, 1, 365),
             order_by=str(arguments.get("order_by") or "created_at_desc"),
             limit=_coerce_bounded_int(arguments.get("limit"), 20, 1, 50),
+            tenant_id=tenant_id,
         )
     if name == "count_reports":
         days = _coerce_optional_int(arguments.get("days"))
         return count_reports(
             group_by=str(arguments.get("group_by") or "status"),
             days=max(1, min(365, days)) if days is not None else None,
+            tenant_id=tenant_id,
         )
     raise ValueError(f"outil_inconnu:{name}")
 
@@ -419,10 +425,10 @@ def _format_urgent_rows(rows: list[dict[str, Any]]) -> str:
     )
 
 
-def mairie_fallback_chat(question: str) -> AgentChatOut:
+def mairie_fallback_chat(question: str, tenant_id: str | None = None) -> AgentChatOut:
     if _wants_urgent_top3(question):
         try:
-            rows = top_urgent_by_sentiment(days=7, limit=3)
+            rows = top_urgent_by_sentiment(days=7, limit=3, tenant_id=tenant_id)
         except Exception as e:
             logger.warning("agent fallback db unreachable: %s", e)
             return AgentChatOut(
@@ -440,7 +446,7 @@ def mairie_fallback_chat(question: str) -> AgentChatOut:
         )
     if _wants_category_breakdown(question):
         try:
-            counts = count_reports(group_by="category")
+            counts = count_reports(group_by="category", tenant_id=tenant_id)
         except Exception as e:
             logger.warning("agent fallback db unreachable: %s", e)
             return AgentChatOut(
@@ -451,7 +457,9 @@ def mairie_fallback_chat(question: str) -> AgentChatOut:
     status = _fallback_status_for(question)
     if status:
         try:
-            rows = query_reports(status=status, days=30, order_by="created_at_desc", limit=10)
+            rows = query_reports(
+                status=status, days=30, order_by="created_at_desc", limit=10, tenant_id=tenant_id
+            )
         except Exception as e:
             logger.warning("agent fallback db unreachable: %s", e)
             return AgentChatOut(
@@ -473,8 +481,9 @@ def mairie_fallback_chat(question: str) -> AgentChatOut:
     )
 
 
-def run_agent_chat(question: str) -> AgentChatOut:
+def run_agent_chat(question: str, tenant_id: str | None = None) -> AgentChatOut:
     q = (question or "").strip()[:_MAX_QUESTION_LEN]
+    tenant = (tenant_id or "").strip() or None
     messages: list[dict[str, Any]] = [
         {"role": "system", "content": AGENT_SYSTEM_PROMPT},
         {"role": "user", "content": q},
@@ -489,7 +498,7 @@ def run_agent_chat(question: str) -> AgentChatOut:
             if not tool_calls:
                 answer = (getattr(message, "content", None) or "").strip()
                 if not answer:
-                    return mairie_fallback_chat(q)
+                    return mairie_fallback_chat(q, tenant)
                 return AgentChatOut(
                     answer=answer,
                     top_reports=top_reports,
@@ -503,7 +512,7 @@ def run_agent_chat(question: str) -> AgentChatOut:
                 arguments = _parse_arguments(payload["function"]["arguments"])
                 trace: dict[str, Any] = {"tool": name, "arguments": arguments}
                 try:
-                    result = execute_tool(name, arguments)
+                    result = execute_tool(name, arguments, tenant_id=tenant)
                     trace["result"] = result
                     content = json.dumps(result, ensure_ascii=False, default=str)
                 except Exception as e:
@@ -532,7 +541,7 @@ def run_agent_chat(question: str) -> AgentChatOut:
         final = chat_completion_tools(messages, tools=None, temperature=0.2)
         answer = (getattr(final, "content", None) or "").strip()
         if not answer:
-            return mairie_fallback_chat(q)
+            return mairie_fallback_chat(q, tenant)
         return AgentChatOut(
             answer=answer,
             top_reports=top_reports,
@@ -541,4 +550,4 @@ def run_agent_chat(question: str) -> AgentChatOut:
         )
     except Exception as e:
         logger.warning("agent chat degraded to mairie fallback: %s", e)
-        return mairie_fallback_chat(q)
+        return mairie_fallback_chat(q, tenant)

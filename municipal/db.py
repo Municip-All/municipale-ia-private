@@ -81,33 +81,38 @@ def find_nearest_report_by_embedding(
     embedding: list[float],
     exclude_id: int | None,
     threshold: float,
+    tenant_id: str | None = None,
 ) -> dict[str, Any]:
     if not embedding:
         return {"found": False, "message": "embedding_vide"}
     vec_literal = "[" + ",".join(str(float(x)) for x in embedding) + "]"
+    tenant_clause = "AND tenant_id = %s" if tenant_id else ""
+    tenant_params: tuple[Any, ...] = (tenant_id,) if tenant_id else ()
     with get_connection() as conn:
         with conn.cursor() as cur:
             if exclude_id is not None:
-                q = """
+                q = f"""
                     SELECT id, status,
                            1 - (embedding <=> %s::vector) AS sim
                     FROM reports
                     WHERE id <> %s
                       AND status NOT IN ('Duplicate', 'Spam', 'Doublon', 'Rejeté')
+                      {tenant_clause}
                     ORDER BY embedding <=> %s::vector
                     LIMIT 1
                 """
-                cur.execute(q, (vec_literal, exclude_id, vec_literal))
+                cur.execute(q, (vec_literal, exclude_id, *tenant_params, vec_literal))
             else:
-                q = """
+                q = f"""
                     SELECT id, status,
                            1 - (embedding <=> %s::vector) AS sim
                     FROM reports
                     WHERE status NOT IN ('Duplicate', 'Spam', 'Doublon', 'Rejeté')
+                    {tenant_clause}
                     ORDER BY embedding <=> %s::vector
                     LIMIT 1
                 """
-                cur.execute(q, (vec_literal, vec_literal))
+                cur.execute(q, (vec_literal, *tenant_params, vec_literal))
             row = cur.fetchone()
             if not row:
                 return {"found": False, "best_similarity": 0.0, "match_id": None}
@@ -246,6 +251,7 @@ def query_reports(
     days: int = 30,
     order_by: str = "created_at_desc",
     limit: int = 20,
+    tenant_id: str | None = None,
 ) -> list[dict[str, Any]]:
     statuses = _normalize_status_list(status)
     order_sql = _REPORT_ORDER_WHITELIST.get(
@@ -255,6 +261,9 @@ def query_reports(
     n_days = max(1, min(365, _coerce_int(days, "days") or 30))
     conditions = ["created_at >= NOW() - (%s::int * INTERVAL '1 day')"]
     params: list[Any] = [n_days]
+    if tenant_id:
+        conditions.append("tenant_id = %s")
+        params.append(tenant_id)
     if statuses:
         conditions.append("status = ANY(%s)")
         params.append(statuses)
@@ -299,13 +308,16 @@ def query_reports(
 
 
 def count_reports(
-    group_by: str = "status", days: int | None = None
+    group_by: str = "status", days: int | None = None, tenant_id: str | None = None
 ) -> list[dict[str, Any]]:
     col = _REPORT_GROUP_WHITELIST.get(
         str(group_by or "").strip().lower(), _REPORT_GROUP_WHITELIST["status"]
     )
     conditions: list[str] = []
     params: list[Any] = []
+    if tenant_id:
+        conditions.append("tenant_id = %s")
+        params.append(tenant_id)
     n_days = _coerce_int(days, "days")
     if n_days is not None:
         conditions.append("created_at >= NOW() - (%s::int * INTERVAL '1 day')")
@@ -331,21 +343,23 @@ def count_reports(
 
 
 def top_urgent_by_sentiment(
-    days: int = 7, limit: int = 3
+    days: int = 7, limit: int = 3, tenant_id: str | None = None
 ) -> list[dict[str, Any]]:
+    tenant_clause = "AND tenant_id = %s\n" if tenant_id else ""
+    params: list[Any] = [days, *( [tenant_id] if tenant_id else [] ), int(limit)]
     with get_connection() as conn:
         with conn.cursor() as cur:
             cur.execute(
-                """
+                f"""
                 SELECT id, description, category, sentiment_score,
                        status, created_at, municipal_service
                 FROM reports
                 WHERE created_at >= NOW() - (%s::int * INTERVAL '1 day')
-                  AND status IN ('En attente', 'Open')
+                {tenant_clause}  AND status IN ('En attente', 'Open')
                 ORDER BY sentiment_score ASC, created_at DESC
                 LIMIT %s
                 """,
-                (days, int(limit)),
+                tuple(params),
             )
             rows = cur.fetchall()
     out: list[dict[str, Any]] = []

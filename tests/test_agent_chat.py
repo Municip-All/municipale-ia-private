@@ -61,7 +61,7 @@ class TestAgentChatToolFlow:
         assert data["top_reports"] == rows
         assert data["tools_used"] == ["top_urgent_by_sentiment"]
         assert data["fallback"] is False
-        mock_top.assert_called_once_with(days=7, limit=3)
+        mock_top.assert_called_once_with(days=7, limit=3, tenant_id="ia-pipeline")
         assert mock_llm.call_count == 2
         second_messages = mock_llm.call_args_list[1][0][0]
         tool_messages = [m for m in second_messages if m["role"] == "tool"]
@@ -168,7 +168,7 @@ class TestAgentChatToolFlow:
                 with patch("municipal.agent_chat.chat_completion_tools", side_effect=fake_tools):
                     with patch("municipal.agent_chat.top_urgent_by_sentiment", return_value=rows) as mock_top:
                         reporting_client.post("/reporting/chat/agent", json={"question": QUESTION_URGENT})
-        mock_top.assert_called_once_with(days=90, limit=20)
+        mock_top.assert_called_once_with(days=90, limit=20, tenant_id="ia-pipeline")
 
 
 class TestAgentChatFallback:
@@ -289,7 +289,8 @@ class TestAgentChatMairieTools:
         assert data["tools_used"] == ["query_reports"]
         assert data["fallback"] is False
         mock_q.assert_called_once_with(
-            status="En cours", category=None, days=30, order_by="created_at_desc", limit=10
+            status="En cours", category=None, days=30, order_by="created_at_desc", limit=10,
+            tenant_id="ia-pipeline",
         )
 
     def test_count_reports_tool_for_category_breakdown(self, reporting_client: TestClient) -> None:
@@ -314,7 +315,7 @@ class TestAgentChatMairieTools:
         assert "Voirie" in data["answer"]
         assert data["tools_used"] == ["count_reports"]
         assert data["fallback"] is False
-        mock_c.assert_called_once_with(group_by="category", days=30)
+        mock_c.assert_called_once_with(group_by="category", days=30, tenant_id="ia-pipeline")
 
     def test_count_reports_without_days_passes_none(self, reporting_client: TestClient) -> None:
         llm_responses = [
@@ -335,7 +336,7 @@ class TestAgentChatMairieTools:
                         reporting_client.post(
                             "/reporting/chat/agent", json={"question": QUESTION_PAR_CATEGORIE}
                         )
-        mock_c.assert_called_once_with(group_by="status", days=None)
+        mock_c.assert_called_once_with(group_by="status", days=None, tenant_id="ia-pipeline")
 
     def test_query_reports_arguments_bounded(self, reporting_client: TestClient) -> None:
         rows = _query_rows()
@@ -362,7 +363,8 @@ class TestAgentChatMairieTools:
                             "/reporting/chat/agent", json={"question": QUESTION_TRAVAUX}
                         )
         mock_q.assert_called_once_with(
-            status=["En attente", "Open"], category=None, days=365, order_by="hack", limit=50
+            status=["En attente", "Open"], category=None, days=365, order_by="hack", limit=50,
+            tenant_id="ia-pipeline",
         )
 
     def test_fallback_status_query_without_llm(self, reporting_client: TestClient) -> None:
@@ -380,7 +382,7 @@ class TestAgentChatMairieTools:
         assert data["top_reports"] == rows
         assert "En cours" in data["answer"]
         assert "Action suggérée" in data["answer"]
-        mock_q.assert_called_once_with(status="En cours", days=30, order_by="created_at_desc", limit=10)
+        mock_q.assert_called_once_with(status="En cours", days=30, order_by="created_at_desc", limit=10, tenant_id="ia-pipeline")
         mock_llm.assert_not_called()
 
     def test_fallback_category_breakdown_without_llm(self, reporting_client: TestClient) -> None:
@@ -397,7 +399,7 @@ class TestAgentChatMairieTools:
         assert "Répartition" in data["answer"]
         assert "12" in data["answer"]
         assert data["top_reports"] == []
-        mock_c.assert_called_once_with(group_by="category")
+        mock_c.assert_called_once_with(group_by="category", tenant_id="ia-pipeline")
 
     def test_fallback_status_db_unreachable(self, reporting_client: TestClient) -> None:
         with patch("reporting_routes.get_conninfo", return_value="postgresql://mock"):

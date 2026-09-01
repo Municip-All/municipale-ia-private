@@ -142,3 +142,75 @@ class TestCountReportsSql:
     def test_rows_mapped_with_null_group(self) -> None:
         result, _, _ = _run(count_reports, [(None, 3)], group_by="municipal_service")
         assert result == [{"group_key": "non renseigné", "count": 3}]
+
+
+class TestTenantIsolation:
+    def test_query_reports_filters_by_tenant(self) -> None:
+        _, sql, params = _run(query_reports, _ROWS, tenant_id="tenant-1")
+        assert "tenant_id = %s" in sql
+        assert params == (30, "tenant-1", 20)
+
+    def test_count_reports_filters_by_tenant(self) -> None:
+        _, sql, params = _run(count_reports, [("Voirie", 12)], group_by="category", tenant_id="tenant-1")
+        assert "tenant_id = %s" in sql
+        assert params == ("tenant-1",)
+
+    def test_top_urgent_filters_by_tenant(self) -> None:
+        from municipal.db import top_urgent_by_sentiment
+
+        _, sql, params = _run(top_urgent_by_sentiment, [], tenant_id="tenant-1")
+        assert "tenant_id = %s" in sql
+        assert params == (7, "tenant-1", 3)
+        _, sql_no_tenant, params = _run(top_urgent_by_sentiment, [])
+        assert "tenant_id = %s" not in sql_no_tenant
+        assert params == (7, 3)
+
+    def test_find_nearest_filters_by_tenant(self) -> None:
+        from unittest.mock import patch as _patch
+
+        from municipal.db import find_nearest_report_by_embedding
+
+        class _OneCursor:
+            def __init__(self, row: tuple[Any, ...]) -> None:
+                self.row = row
+                self.calls: list[tuple[str, Any]] = []
+
+            def execute(self, sql: str, params: Any = None) -> None:
+                self.calls.append((sql, params))
+
+            def fetchone(self) -> tuple[Any, ...]:
+                return self.row
+
+            def __enter__(self) -> "_OneCursor":
+                return self
+
+            def __exit__(self, *args: Any) -> bool:
+                return False
+
+        class _OneConn:
+            def __init__(self, row: tuple[Any, ...]) -> None:
+                self.cursor_obj = _OneCursor(row)
+
+            def cursor(self) -> _OneCursor:
+                return self.cursor_obj
+
+            def __enter__(self) -> "_OneConn":
+                return self
+
+            def __exit__(self, *args: Any) -> bool:
+                return False
+
+        vec = [0.1, 0.2, 0.3]
+        fake = _OneConn((5, "En attente", 0.9))
+        with _patch("municipal.db.get_connection") as mock_conn:
+            mock_conn.return_value.__enter__.return_value = fake
+            find_nearest_report_by_embedding(vec, None, 0.85, tenant_id="tenant-1")
+        sql, params = fake.cursor_obj.calls[0]
+        assert "tenant_id = %s" in sql
+        assert params[1] == "tenant-1"
+        fake2 = _OneConn((5, "En attente", 0.9))
+        with _patch("municipal.db.get_connection") as mock_conn:
+            mock_conn.return_value.__enter__.return_value = fake2
+            find_nearest_report_by_embedding(vec, None, 0.85)
+        sql_no_tenant, _ = fake2.cursor_obj.calls[0]
+        assert "tenant_id = %s" not in sql_no_tenant

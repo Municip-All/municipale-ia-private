@@ -26,6 +26,7 @@ def submit_report(
             a["embedding"],
             exclude_report_id=None,
             threshold=DUPLICATE_SIMILARITY_THRESHOLD,
+            tenant_id=tenant_id,
         )
         dup_snapshot = {
             key: d.get(key)

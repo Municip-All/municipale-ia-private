@@ -255,6 +255,7 @@ class CitoyenChatOut(BaseModel):
     municipal_service: str
     sentiment_score: float
     reassured: bool = True
+    report_id: int | None = None
 
 
 @router.post("/chat/citoyen", response_model=CitoyenChatOut)
@@ -272,12 +273,18 @@ def chat_citoyen(request: Request, payload: CitoyenChatIn) -> CitoyenChatOut:
             out = None
         if out is not None:
             rep = out.get("created_report")
+            raw_id = rep.get("report_id") if rep else None
+            try:
+                report_id = int(str(raw_id)) if raw_id is not None else None
+            except (TypeError, ValueError):
+                report_id = None
             return CitoyenChatOut(
                 reply=out["reply"],
                 category=str(rep.get("category") or "") if rep else "",
                 municipal_service=str(rep.get("municipal_service") or "") if rep else "",
                 sentiment_score=float(rep.get("sentiment_score") or 0.0) if rep else 0.0,
                 reassured=not bool(rep.get("is_spam")) if rep else True,
+                report_id=report_id,
             )
     try:
         r = submit_report(payload.user_id, payload.message, tenant_id=payload.tenant_id)
@@ -371,7 +378,7 @@ def chat_agent(request: Request, payload: AgentChatIn) -> AgentChatOut:
         raise HTTPException(status_code=503, detail=str(e)) from e
     if llm_configured():
         try:
-            return run_agent_chat(payload.question)
+            return run_agent_chat(payload.question, payload.tenant_id)
         except Exception:
             logger.warning("agent endpoint fallback to mairie static mode")
-    return mairie_fallback_chat(payload.question)
+    return mairie_fallback_chat(payload.question, payload.tenant_id)
