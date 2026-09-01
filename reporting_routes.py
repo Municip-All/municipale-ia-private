@@ -16,6 +16,7 @@ from municipal.router import smart_route
 from municipal.duplicate import duplicate_finder
 from municipal.rate_limit import limiter
 from municipal.agent_chat import AgentChatOut, mairie_fallback_chat, run_agent_chat
+from municipal.citoyen_chat import run_citoyen_chat
 
 logger = logging.getLogger("municipall.reporting")
 
@@ -263,6 +264,21 @@ def chat_citoyen(request: Request, payload: CitoyenChatIn) -> CitoyenChatOut:
         get_conninfo()
     except RuntimeError as e:
         raise HTTPException(status_code=503, detail=str(e)) from e
+    if llm_configured():
+        try:
+            out = run_citoyen_chat(payload.message, payload.user_id, payload.tenant_id)
+        except Exception:
+            logger.warning("citoyen agent fallback to template pipeline")
+            out = None
+        if out is not None:
+            rep = out.get("created_report")
+            return CitoyenChatOut(
+                reply=out["reply"],
+                category=str(rep.get("category") or "") if rep else "",
+                municipal_service=str(rep.get("municipal_service") or "") if rep else "",
+                sentiment_score=float(rep.get("sentiment_score") or 0.0) if rep else 0.0,
+                reassured=not bool(rep.get("is_spam")) if rep else True,
+            )
     try:
         r = submit_report(payload.user_id, payload.message, tenant_id=payload.tenant_id)
     except Exception as e:
