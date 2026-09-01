@@ -38,7 +38,7 @@ def get_database_url() -> str:
         _database_url = _build_database_url()
     return _database_url
 
-LITELLM_MODEL = os.environ.get("LITELLM_MODEL", "glm-53-flash")
+LITELLM_MODEL = os.environ.get("LITELLM_MODEL", "openai/glm-53-flash")
 LITELLM_API_KEY = os.environ.get("LITELLM_API_KEY", "").strip()
 LITELLM_API_BASE = os.environ.get("LITELLM_API_BASE", "").strip()
 LITELLM_TIMEOUT_S = float(os.environ.get("LITELLM_TIMEOUT_S", "120"))
