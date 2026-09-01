@@ -232,7 +232,17 @@ sequenceDiagram
 
 ### 🤖 Chatbot Citoyen
 
-Permet à un citoyen de décrire son problème en langage naturel.
+Permet à un citoyen de poser une **question** (travaux, transports, événements,
+services) ou de décrire un **signalement**. C'est une boucle d'agent
+(function-calling LiteLLM, même pattern que l'agent mairie) :
+
+- **QUESTION** → le LLM appelle les outils de données mairie
+  (`get_construction_works`, `get_city_events`, `get_transport_disruptions`,
+  sources : tables `construction_works`/`events` + endpoint NestJS
+  `{BACKEND_URL}/municipalities/{id}/transports/disruptions`) et répond
+  factuellement en français simple. **Aucun signalement n'est créé.**
+- **SIGNALEMENT** (problème localisé) → le LLM appelle `create_signalement`,
+  qui exécute la pipeline complète (Analyzer + Router + Duplicate).
 
 ```bash
 curl -X POST http://localhost:8000/reporting/chat/citoyen \
@@ -254,10 +264,15 @@ curl -X POST http://localhost:8000/reporting/chat/citoyen \
 }
 ```
 
+Pour une simple question, `category` / `municipal_service` sont vides et
+`sentiment_score` vaut `0.0` (champ `reply` inchangé, format backward-compatible).
+
 **Intelligence** :
-- Pipeline complète (Analyzer + Router + Duplicate)
-- Fallback template si LLM non configuré
-- Réponse rassurante et informative
+- Boucle d'agent max 4 itérations d'outils (données mairie + pipeline)
+- Fallback template + pipeline si LLM non configuré ou en échec
+- Rate limit 10/minute, `message` limité à 5000 caractères
+- Env : `BACKEND_URL` (défaut `http://localhost:3002`), `BACKEND_TIMEOUT_S` (défaut 5) ;
+  si le backend est down, les perturbations transports renvoient liste vide + note
 
 ---
 
@@ -316,7 +331,7 @@ curl -X POST http://localhost:8000/reporting/chat/agent \
 |---------|-------|-------------|
 | `POST` | `/reporting/enrich` | Enrichit un signalement existant (appelé par NestJS) |
 | `POST` | `/reporting/submit` | Crée un signalement avec pipeline complète |
-| `POST` | `/reporting/chat/citoyen` | Chatbot pour les citoyens |
+| `POST` | `/reporting/chat/citoyen` | Chatbot citoyen : questions (données mairie) + signalements (pipeline) |
 | `POST` | `/reporting/chat/mairie` | Chatbot pour les agents municipaux |
 | `POST` | `/reporting/chat/agent` | Agent LLM tool-calling pour le back-office mairie |
 | `GET` | `/health` | État du service et des modèles |
