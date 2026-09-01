@@ -347,3 +347,88 @@ class TestCitoyenAgentLoopBounds:
                             )
         assert r.status_code == 200
         assert "Éclairage public" in r.json()["reply"]
+
+
+WASTE_RESULT = {
+    "services": [
+        {"service": "Ordures ménagères", "jours": "lundi, jeudi", "heure": "05:30"}
+    ],
+    "note": None,
+}
+
+REPORT_STATUS = {
+    "trouve": True,
+    "numero": 12,
+    "statut": "En cours",
+    "categorie": "Éclairage public",
+    "service_en_charge": "Services techniques",
+    "doublon_de": None,
+    "signale_comme_spam": False,
+    "cree_le": "2026-08-28T09:00:00",
+    "maj_le": "2026-08-30T10:00:00",
+}
+
+
+class TestCitoyenNewDataTools:
+    def test_waste_collection_tool_loop(self, reporting_client: TestClient) -> None:
+        llm_responses = [
+            _message(tool_calls=[_tool_call("get_waste_collection", {})]),
+            _message(content="Les ordures ménagères sont collectées le lundi et le jeudi à 5h30."),
+        ]
+
+        def fake_tools(messages, tools=None, **kwargs):
+            return llm_responses.pop(0)
+
+        with patch("reporting_routes.get_conninfo", return_value="postgresql://mock"):
+            with patch("reporting_routes.llm_configured", return_value=True):
+                with patch("municipal.citoyen_chat.chat_completion_tools", side_effect=fake_tools):
+                    with patch(
+                        "municipal.citoyen_chat.get_waste_collection",
+                        return_value=WASTE_RESULT,
+                    ) as mock_waste:
+                        r = reporting_client.post(
+                            "/reporting/chat/citoyen",
+                            json={"user_id": "u1", "message": "Quand passent les poubelles ?"},
+                        )
+        assert r.status_code == 200
+        assert "lundi" in r.json()["reply"]
+        mock_waste.assert_called_once_with("ia-pipeline", limit=10)
+
+    def test_report_status_tool_loop(self, reporting_client: TestClient) -> None:
+        llm_responses = [
+            _message(tool_calls=[_tool_call("get_report_status", {"numero": 12})]),
+            _message(content="Votre signalement n°12 est en attente, pris en charge par les services techniques."),
+        ]
+
+        def fake_tools(messages, tools=None, **kwargs):
+            return llm_responses.pop(0)
+
+        with patch("reporting_routes.get_conninfo", return_value="postgresql://mock"):
+            with patch("reporting_routes.llm_configured", return_value=True):
+                with patch("municipal.citoyen_chat.chat_completion_tools", side_effect=fake_tools):
+                    with patch(
+                        "municipal.citoyen_chat.get_report_status",
+                        return_value=REPORT_STATUS,
+                    ) as mock_status:
+                        r = reporting_client.post(
+                            "/reporting/chat/citoyen",
+                            json={"user_id": "u1", "message": "Où en est le signalement 12 ?"},
+                        )
+        assert r.status_code == 200
+        assert "n°12" in r.json()["reply"]
+        mock_status.assert_called_once_with(12, "ia-pipeline")
+
+    def test_associations_and_mairie_infos_dispatch(self) -> None:
+        from municipal.citoyen_chat import execute_citoyen_tool
+
+        with patch(
+            "municipal.citoyen_chat.get_associations", return_value={"associations": [], "note": None}
+        ) as mock_asso:
+            execute_citoyen_tool("get_associations", {"limit": 3}, user_id="u1", tenant_id="t1")
+        mock_asso.assert_called_once_with("t1", limit=3)
+
+        with patch(
+            "municipal.citoyen_chat.get_mairie_infos", return_value={"horaires": "9h-17h"}
+        ) as mock_infos:
+            execute_citoyen_tool("get_mairie_infos", {}, user_id="u1", tenant_id="t1")
+        mock_infos.assert_called_once_with("t1")

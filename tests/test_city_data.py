@@ -188,3 +188,155 @@ class TestGetTransportDisruptions:
     def test_default_backend_url_when_env_missing(self) -> None:
         with patch.dict("os.environ", {"BACKEND_URL": ""}):
             assert city_data.get_backend_base_url() == "http://localhost:3002"
+
+
+def _fake_conn_one(row, capture: dict) -> MagicMock:
+    cur = MagicMock()
+    conn = MagicMock()
+
+    def execute(query, params=None):
+        capture["query"] = query
+        capture["params"] = params
+        cur.fetchone.return_value = row
+
+    cur.execute.side_effect = execute
+    conn.cursor.return_value.__enter__.return_value = cur
+    return conn
+
+
+class TestGetWasteCollection:
+    def test_services_mapped_with_french_days(self) -> None:
+        config = {
+            "services": [
+                {"type": "Ordures ménagères", "days": [1, 4], "time": "05:30"},
+                {"type": "Tri sélectif", "days": [3], "time": "06:00"},
+            ]
+        }
+        capture: dict = {}
+        conn = _fake_conn_one((json.dumps(config),), capture)
+        with patch.object(city_data, "get_connection") as fake:
+            fake.return_value.__enter__.return_value = conn
+            out = city_data.get_waste_collection("ville-a")
+        assert 'WHERE id = %s' in capture["query"]
+        assert capture["params"] == ("ville-a",)
+        assert out["note"] is None
+        assert out["services"][0] == {
+            "service": "Ordures ménagères",
+            "jours": "lundi, jeudi",
+            "heure": "05:30",
+        }
+        assert out["services"][1]["jours"] == "mercredi"
+
+    def test_missing_config_returns_note(self) -> None:
+        conn = _fake_conn_one((None,), {})
+        with patch.object(city_data, "get_connection") as fake:
+            fake.return_value.__enter__.return_value = conn
+            out = city_data.get_waste_collection("ville-a")
+        assert out == {"services": [], "note": city_data.get_waste_collection.__doc__ or out["note"]}
+        assert out["services"] == []
+        assert "Déchets & Toilettes" in out["note"]
+
+
+class TestGetAssociations:
+    def test_associations_mapped(self) -> None:
+        items = [
+            {
+                "name": "Comité de quartier",
+                "category": "association",
+                "description": "Actions locales",
+                "address": "1 rue Centrale",
+                "contactEmail": "contact@asso.fr",
+                "contactPhone": "0102030405",
+                "website": "https://exemple.fr",
+            }
+        ]
+        conn = _fake_conn_one((json.dumps(items),), {})
+        with patch.object(city_data, "get_connection") as fake:
+            fake.return_value.__enter__.return_value = conn
+            out = city_data.get_associations("ville-a")
+        assert out["note"] is None
+        assert out["associations"][0]["nom"] == "Comité de quartier"
+        assert out["associations"][0]["telephone"] == "0102030405"
+
+    def test_empty_returns_note(self) -> None:
+        conn = _fake_conn_one((None,), {})
+        with patch.object(city_data, "get_connection") as fake:
+            fake.return_value.__enter__.return_value = conn
+            out = city_data.get_associations("ville-a")
+        assert out["associations"] == []
+        assert "Social & Asso." in out["note"]
+
+
+class TestGetMairieInfos:
+    def test_profile_numbers_and_links(self) -> None:
+        profile = {
+            "openingHours": "Lun-Ven 8h30-17h",
+            "address": "1 place de la Mairie",
+            "website": "https://ville.fr",
+            "mayorName": "Sophie Martin",
+        }
+        numbers = [{"label": "Police", "phone": "17"}]
+        links = [{"label": "Site officiel", "url": "https://ville.fr"}]
+        conn = _fake_conn_one(
+            (json.dumps(profile), json.dumps(numbers), json.dumps(links)), {}
+        )
+        with patch.object(city_data, "get_connection") as fake:
+            fake.return_value.__enter__.return_value = conn
+            out = city_data.get_mairie_infos("ville-a")
+        assert out["horaires"] == "Lun-Ven 8h30-17h"
+        assert out["maire"] == "Sophie Martin"
+        assert out["numeros_utiles"] == [{"label": "Police", "telephone": "17"}]
+        assert out["note"] is None
+
+    def test_empty_profile_returns_note(self) -> None:
+        conn = _fake_conn_one((None, None, None), {})
+        with patch.object(city_data, "get_connection") as fake:
+            fake.return_value.__enter__.return_value = conn
+            out = city_data.get_mairie_infos("ville-a")
+        assert "Aucune information pratique" in out["note"]
+
+
+class TestGetReportStatus:
+    def test_found_maps_public_fields_only(self) -> None:
+        capture: dict = {}
+        conn = _fake_conn_one(
+            (
+                12,
+                "En attente",
+                "Éclairage public",
+                "Services techniques",
+                None,
+                False,
+                datetime(2026, 8, 28, 9, 0),
+                datetime(2026, 8, 30, 10, 0),
+            ),
+            capture,
+        )
+        with patch.object(city_data, "get_connection") as fake:
+            fake.return_value.__enter__.return_value = conn
+            out = city_data.get_report_status("12", "ville-a")
+        assert "tenant_id = %s" in capture["query"]
+        assert capture["params"] == (12, "ville-a")
+        assert out["trouve"] is True
+        assert out["numero"] == 12
+        assert out["statut"] == "En attente"
+        assert out["service_en_charge"] == "Services techniques"
+        assert "description" not in out
+
+    def test_not_found_returns_note(self) -> None:
+        conn = _fake_conn_one(None, {})
+        with patch.object(city_data, "get_connection") as fake:
+            fake.return_value.__enter__.return_value = conn
+            out = city_data.get_report_status(999, "ville-a")
+        assert out["trouve"] is False
+        assert "Aucun signalement trouvé" in out["note"]
+
+    def test_invalid_id_never_queries(self) -> None:
+        with patch.object(city_data, "get_connection") as fake:
+            out = city_data.get_report_status("abc", "ville-a")
+        fake.assert_not_called()
+        assert out["trouve"] is False
+
+    def test_out_of_bounds_id_rejected(self) -> None:
+        out = city_data.get_report_status(-5, "ville-a")
+        assert out["trouve"] is False

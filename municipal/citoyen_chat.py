@@ -1,8 +1,9 @@
 """Boucle d'agent du chatbot citoyen (/reporting/chat/citoyen).
 
 Réutilise le pattern tool-calling de agent_chat.py : le LLM décide d'appeler
-les outils de données mairie (travaux, événements, transports) pour répondre
-aux QUESTIONS, ou l'outil create_signalement (pipeline complète) pour un
+les outils de données mairie (travaux, événements, transports, déchets,
+associations, infos pratiques, statut signalement) pour répondre aux
+QUESTIONS, ou l'outil create_signalement (pipeline complète) pour un
 SIGNALEMENT localisé. Une simple question ne crée jamais de signalement.
 """
 
@@ -23,9 +24,13 @@ from municipal.agent_chat import (
     execute_tool,
 )
 from municipal.city_data import (
+    get_associations,
     get_city_events,
     get_construction_works,
+    get_mairie_infos,
+    get_report_status,
     get_transport_disruptions,
+    get_waste_collection,
 )
 from municipal.llm_client import chat_completion_tools
 from municipal.pipeline import submit_report
@@ -39,13 +44,21 @@ CITOYEN_SYSTEM_PROMPT = (
     "Réponds toujours en français simple, clair et rassurant, maximum 6 phrases. "
     "Décision obligatoire avant de répondre : "
     "1) Si l'utilisateur pose une QUESTION (travaux en cours, transports, événements, "
-    "services municipaux), appelle les outils de données de la mairie "
-    "(get_construction_works, get_city_events, get_transport_disruptions) puis réponds "
-    "factuellement à partir des résultats. Si les données renvoyées sont vides, dis-le "
-    "clairement. N'invente jamais d'information. "
+    "collecte des déchets, associations, horaires ou contacts de la mairie, suivi d'un "
+    "signalement, services municipaux), appelle les outils de données de la mairie "
+    "(get_construction_works, get_city_events, get_transport_disruptions, "
+    "get_waste_collection, get_associations, get_mairie_infos, get_report_status) "
+    "puis réponds factuellement à partir des résultats. Si les données renvoyées sont "
+    "vides ou accompagnées d'une note, dis-le clairement et oriente vers la rubrique "
+    "du site concernée (Travaux, Transports, Déchets & Toilettes, Social & Asso., "
+    "Signalements). N'invente jamais d'information. "
     "2) Si l'utilisateur décrit un SIGNALEMENT (problème localisé à faire traiter par "
-    "la mairie), appelle l'outil create_signalement avec le texte du problème, puis "
-    "confirme le traitement d'après le résultat (statut, catégorie, service). "
+    "la mairie : voirie, éclairage, propreté, espaces verts, équipement cassé…), appelle "
+    "l'outil create_signalement avec le texte du problème, puis confirme le traitement "
+    "d'après le résultat (statut, catégorie, service) et communique le numéro de "
+    "signalement en précisant qu'il permettra d'en suivre l'avancement. Si l'utilisateur "
+    "ne donne pas de lieu ou de description assez précise, demande une précision avant "
+    "d'enregistrer. "
     "Tu peux utiliser smart_analyzer, smart_route et duplicate_finder pour analyser "
     "un texte de signalement avant l'enregistrement. "
     "JAMAIS appeler create_signalement pour une simple question."
@@ -143,6 +156,86 @@ _CITOYEN_TOOLS: list[dict[str, Any]] = [
             },
         },
     },
+    {
+        "type": "function",
+        "function": {
+            "name": "get_waste_collection",
+            "description": (
+                "Calendrier de collecte des déchets publié par la mairie "
+                "(types de collecte, jours, horaires)."
+            ),
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "limit": {
+                        "type": "integer",
+                        "description": "Nombre maximum de services (1-20, défaut 10)",
+                    }
+                },
+                "required": [],
+                "additionalProperties": False,
+            },
+        },
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "get_associations",
+            "description": (
+                "Associations, groupes citoyens et initiatives locales recensés "
+                "par la commune (nom, catégorie, description, contacts)."
+            ),
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "limit": {
+                        "type": "integer",
+                        "description": "Nombre maximum de résultats (1-20, défaut 10)",
+                    }
+                },
+                "required": [],
+                "additionalProperties": False,
+            },
+        },
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "get_mairie_infos",
+            "description": (
+                "Informations pratiques de la mairie : horaires d'ouverture, adresse, "
+                "site web, nom du maire, numéros utiles et liens pratiques."
+            ),
+            "parameters": {
+                "type": "object",
+                "properties": {},
+                "required": [],
+                "additionalProperties": False,
+            },
+        },
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "get_report_status",
+            "description": (
+                "Statut d'avancement d'un signalement (statut, catégorie, service en "
+                "charge, dates). Demander le numéro du signalement à l'utilisateur "
+                "s'il ne l'a pas fourni."
+            ),
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "numero": {
+                        "type": "integer",
+                        "description": "Numéro du signalement (ex : 42)",
+                    }
+                },
+                "required": ["numero"],
+                "additionalProperties": False,
+            },
+        },
+    },
 ] + [t for t in AGENT_TOOLS if t["function"]["name"] in ("smart_analyzer", "smart_route", "duplicate_finder")]
 
 
@@ -179,7 +272,21 @@ def execute_citoyen_tool(
             lat=_coerce_float(arguments.get("lat")),
             lon=_coerce_float(arguments.get("lon")),
         )
-    return execute_tool(name, arguments)
+    if name == "get_waste_collection":
+        return get_waste_collection(
+            tenant_id,
+            limit=_coerce_bounded_int(arguments.get("limit"), 10, 1, 20),
+        )
+    if name == "get_associations":
+        return get_associations(
+            tenant_id,
+            limit=_coerce_bounded_int(arguments.get("limit"), 10, 1, 20),
+        )
+    if name == "get_mairie_infos":
+        return get_mairie_infos(tenant_id)
+    if name == "get_report_status":
+        return get_report_status(arguments.get("numero"), tenant_id)
+    return execute_tool(name, arguments, tenant_id=tenant_id)
 
 
 def _report_confirmation(report: dict[str, Any]) -> str:
