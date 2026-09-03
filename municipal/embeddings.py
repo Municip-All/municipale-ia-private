@@ -21,6 +21,7 @@ def get_model():
     return _model
 
 
+
 def embed_texts(texts: list[str], normalize: bool = True) -> np.ndarray:
     m = get_model()
     return m.encode(

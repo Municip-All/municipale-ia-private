@@ -24,6 +24,10 @@ logger = logging.getLogger("municipall.api")
 def _ml_artifacts_ready() -> bool:
     return TFIDF_PATH.is_file() and MODEL_PATH.is_file() and ENC_PATH.is_file()
 
+def _warmup_embeddings() -> None:
+    from municipal.router import smart_route
+    smart_route("nid de poule rue de la paix")
+
 try:
     import redis
     REDIS_AVAIL = True
@@ -38,6 +42,12 @@ rds = None
 async def lifespan(_app: FastAPI) -> AsyncGenerator[None, None]:
     global predictor, rds
     predictor = Predictor() if _ml_artifacts_ready() else None
+    if os.environ.get("MUNICIPAL_SKIP_WARMUP", "").strip() != "1":
+        try:
+            _warmup_embeddings()
+            logger.info("embeddings warmup ok")
+        except Exception:
+            logger.warning("embeddings warmup failed, first request will be slow", exc_info=True)
     if REDIS_AVAIL:
         try:
             rds = redis.Redis(
