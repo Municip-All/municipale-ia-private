@@ -153,12 +153,15 @@ class TestGetTransportDisruptions:
         assert out["disruptions"] == []
         assert out["note"]
 
-    def test_missing_coordinates_no_http_call(self) -> None:
-        with patch.object(city_data.urllib.request, "urlopen") as mock_urlopen:
-            out = city_data.get_transport_disruptions("city-1")
+    def test_missing_coordinates_falls_back_to_city_center(self) -> None:
+        with patch.object(
+            city_data.urllib.request, "urlopen", side_effect=OSError("no network")
+        ) as mock_urlopen:
+            out = city_data.get_transport_disruptions("le-kremlin-bicetre")
+        assert mock_urlopen.call_count == 1
+        assert "lat=48.812" in mock_urlopen.call_args[0][0].full_url
         assert out["disruptions"] == []
         assert out["note"]
-        mock_urlopen.assert_not_called()
 
     def test_invalid_coordinates_no_http_call(self) -> None:
         with patch.object(city_data.urllib.request, "urlopen") as mock_urlopen:

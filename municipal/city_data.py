@@ -115,6 +115,12 @@ def get_city_events(tenant_id: str, limit: int = 10) -> list[dict[str, Any]]:
     return out
 
 
+_CITY_CENTERS: dict[str, tuple[float, float]] = {
+    "le-kremlin-bicetre": (48.8120, 2.3590),
+}
+_DEFAULT_CITY_CENTER = (48.8566, 2.3522)
+
+
 def get_transport_disruptions(
     city_id: str,
     lat: float | None = None,
@@ -125,10 +131,8 @@ def get_transport_disruptions(
     la = _coerce_float(lat)
     lo = _coerce_float(lon)
     if la is None or lo is None:
-        return {
-            "disruptions": [],
-            "note": "Position indisponible : impossible de consulter les perturbations transports.",
-        }
+        center = _CITY_CENTERS.get(city) or _DEFAULT_CITY_CENTER
+        la, lo = center
     if abs(la) > 90 or abs(lo) > 180:
         return {
             "disruptions": [],

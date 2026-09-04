@@ -112,8 +112,9 @@ _CITOYEN_TOOLS: list[dict[str, Any]] = [
         "function": {
             "name": "get_transport_disruptions",
             "description": (
-                "Perturbations en cours sur les transports en commun à proximité "
-                "(données temps réel du backend de la ville)."
+                "Perturbations en cours sur les transports en commun de la ville "
+                "(données temps réel du backend de la ville). Si l'utilisateur donne "
+                "sa position, les perturbations proches sont mises en avant."
             ),
             "parameters": {
                 "type": "object",
